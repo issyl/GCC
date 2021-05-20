@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use app\Models\tournament;
 
 class tournamentController extends Controller
 {
@@ -13,7 +14,9 @@ class tournamentController extends Controller
      */
     public function index()
     {
-        //
+        $tournaments = tournament::all();
+
+        return $tournaments->toJson();
     }
 
     /**
@@ -45,7 +48,9 @@ class tournamentController extends Controller
      */
     public function show($id)
     {
-        //
+        $tournament = tournament::find($id);
+
+        return $tournament->toJson();
     }
 
     /**

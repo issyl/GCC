@@ -25,9 +25,9 @@ Route::get('/signin', 'playerController@destroy');
 
 
 // tournament
-Route::get('/tournament', 'tournamentController@index');
+Route::get('/tournaments', 'tournamentController@index');
 
-Route::post('/tournament', 'tournamentCOntroller@registerTournament');
+Route::post('/tournaments', 'tournamentCOntroller@registerTournament');
 
 // champion
 
