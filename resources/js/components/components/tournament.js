@@ -43,17 +43,19 @@ class tournament extends Component {
                                 <a>FINISHED TOURNAMENT</a>
                             </div>
                             <div className="tournamentTable">
-                                    {Tournaments.map((Tournaments) => (
-                                        <Link
-                                            className="tournamentTableContent"
-                                            to={`/${Tournaments.id}`}
-                                            key={Tournaments.id}
-                                        >
-                                            <h1>{(Tournaments.name).toUpperCase()}</h1>
-                                            <h1>{Tournaments.date}</h1>
-                                            <h1>{Tournaments.prize}</h1>
-                                        </Link>
-                                    ))}
+                                {Tournaments.map((Tournaments) => (
+                                    <Link
+                                        className="tournamentTableContent"
+                                        to={`/${Tournaments.id}`}
+                                        key={Tournaments.id}
+                                    >
+                                        <h3>
+                                            {Tournaments.name.toUpperCase()}
+                                        </h3>
+                                        <h3>{Tournaments.date}</h3>
+                                        <h3>{Tournaments.prize}</h3>
+                                    </Link>
+                                ))}
                             </div>
                         </div>
                     </div>
