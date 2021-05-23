@@ -1,0 +1,67 @@
+#tournament {
+    background-color: #10131c;
+    background-image: url("../img/background.png");
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    background-size: cover;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.tournamentRightContent {
+    display: flex;
+    flex-direction: column;
+    color: #ffffff;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}
+
+.tournamentLeftContent {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.subLeftContent {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.gameMenu {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #28283b;
+    width: 10%;
+    height: 90%;
+}
+
+.imgGameMenu {
+    width: 50%;
+    height: 50%;
+    background-image: #ffffff;
+}
+
+.mainContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    background-color: #1e3044;
+    width: 90%;
+    height: 90%;
+}
+
+.contentMenu {
+}
+
+.tournamentTable {
+}

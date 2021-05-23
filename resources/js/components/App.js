@@ -30,7 +30,7 @@ class App extends Component {
                                     <MainContent />
                                 </Route>
                                 <Route exact path="/tournament">
-                                <Tournament />
+                                    <Tournament />
                             </Route>
                                 <Footer />
                             </>
