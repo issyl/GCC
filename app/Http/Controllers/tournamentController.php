@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use app\Models\tournament;
+use App\Models\Tournament;
 
 class tournamentController extends Controller
 {
@@ -14,7 +14,7 @@ class tournamentController extends Controller
      */
     public function index()
     {
-        $tournaments = tournament::all();
+        $tournaments = Tournament::all();
 
         return $tournaments->toJson();
     }

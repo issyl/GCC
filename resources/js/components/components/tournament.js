@@ -10,20 +10,25 @@ class tournament extends Component {
         super();
 
         this.state = {
-            tournaments: [],
+            Tournaments: [],
         };
     }
 
-    componentDidMount() {
-        axios.get("/tournaments").then((response) => {
-            this.setState({
-                tournaments: response.data,
+    componentWillMount() {
+        axios
+            .get("/api/tournaments")
+            .then((response) => {
+                this.setState({
+                    Tournaments: response.data,
+                });
+            })
+            .catch((error) => {
+                console.log(error);
             });
-        });
     }
 
     render() {
-        const { tournaments } = this.state;
+        const { Tournaments } = this.state;
         return (
             <div id="tournament">
                 <div className="tournamentLeftContent">
@@ -37,27 +42,19 @@ class tournament extends Component {
                                 <a>ACTIVE TOURNAMENT</a>
                                 <a>FINISHED TOURNAMENT</a>
                             </div>
-                            <table className="tournamentTable">
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Date</th>
-                                    <th>Prize</th>
-                                </tr>
-                                <tr>
-                                    {tournaments.map((tournaments) => (
+                            <div className="tournamentTable">
+                                    {Tournaments.map((Tournaments) => (
                                         <Link
-                                            className=""
-                                            to={`/${tournaments.id}`}
-                                            key={tournaments.id}
+                                            className="tournamentTableContent"
+                                            to={`/${Tournaments.id}`}
+                                            key={Tournaments.id}
                                         >
-                                            {tournaments.name}
-                                            <th>{tournaments.name}</th>
-                                            <th>{tournaments.date}</th>
-                                            <th>{tournaments.prize}</th>
+                                            <h1>{(Tournaments.name).toUpperCase()}</h1>
+                                            <h1>{Tournaments.date}</h1>
+                                            <h1>{Tournaments.prize}</h1>
                                         </Link>
                                     ))}
-                                </tr>
-                            </table>
+                            </div>
                         </div>
                     </div>
                 </div>

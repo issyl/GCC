@@ -2773,26 +2773,28 @@ var tournament = /*#__PURE__*/function (_Component) {
 
     _this = _super.call(this);
     _this.state = {
-      tournaments: []
+      Tournaments: []
     };
     return _this;
   }
 
   _createClass(tournament, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
+    key: "componentWillMount",
+    value: function componentWillMount() {
       var _this2 = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_3___default().get("/tournaments").then(function (response) {
+      axios__WEBPACK_IMPORTED_MODULE_3___default().get("/api/tournaments").then(function (response) {
         _this2.setState({
-          tournaments: response.data
+          Tournaments: response.data
         });
+      })["catch"](function (error) {
+        console.log(error);
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var tournaments = this.state.tournaments;
+      var Tournaments = this.state.Tournaments;
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
         id: "tournament",
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
@@ -2817,31 +2819,21 @@ var tournament = /*#__PURE__*/function (_Component) {
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("a", {
                   children: "FINISHED TOURNAMENT"
                 })]
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("table", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
                 className: "tournamentTable",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("tr", {
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("th", {
-                    children: "Name"
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("th", {
-                    children: "Date"
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("th", {
-                    children: "Prize"
-                  })]
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("tr", {
-                  children: tournaments.map(function (tournaments) {
-                    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Link, {
-                      className: "",
-                      to: "/".concat(tournaments.id),
-                      children: [tournaments.name, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("th", {
-                        children: tournaments.name
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("th", {
-                        children: tournaments.date
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("th", {
-                        children: tournaments.prize
-                      })]
-                    }, tournaments.id);
-                  })
-                })]
+                children: Tournaments.map(function (Tournaments) {
+                  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Link, {
+                    className: "tournamentTableContent",
+                    to: "/".concat(Tournaments.id),
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h1", {
+                      children: Tournaments.name.toUpperCase()
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h1", {
+                      children: Tournaments.date
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h1", {
+                      children: Tournaments.prize
+                    })]
+                  }, Tournaments.id);
+                })
               })]
             })]
           })
@@ -7547,7 +7539,7 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 var ___CSS_LOADER_URL_REPLACEMENT_0___ = _node_modules_css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_1___default()(_img_background_png__WEBPACK_IMPORTED_MODULE_2__.default);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "#tournament {\r\n    background-color: #10131c;\r\n    background-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\r\n    height: 100vh;\r\n    width: 100%;\r\n    display: flex;\r\n    background-size: cover;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n}\r\n\r\n.tournamentRightContent {\r\n    display: flex;\r\n    flex-direction: column;\r\n    color: #ffffff;\r\n    justify-content: center;\r\n    align-items: center;\r\n    width: 50%;\r\n}\r\n\r\n.tournamentLeftContent {\r\n    display: flex;\r\n    flex-direction: column;\r\n    width: 50%;\r\n}\r\n\r\n.subLeftContent {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    align-items: center;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.gameMenu {\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    background-color: #28283b;\r\n    width: 10%;\r\n    height: 90%;\r\n}\r\n\r\n.imgGameMenu {\r\n    width: 50%;\r\n    height: 50%;\r\n    background-image: #ffffff;\r\n}\r\n\r\n.mainContent {\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    color: #ffffff;\r\n    background-color: #1e3044;\r\n    width: 90%;\r\n    height: 90%;\r\n}\r\n\r\n.contentMenu {\r\n}\r\n\r\n.tournamentTable {\r\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "#tournament {\r\n    background-color: #10131c;\r\n    background-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\r\n    height: 100vh;\r\n    width: 100%;\r\n    display: flex;\r\n    background-size: cover;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    padding-top: 10vh;\r\n}\r\n\r\n.tournamentRightContent {\r\n    display: flex;\r\n    flex-direction: column;\r\n    color: #ffffff;\r\n    justify-content: center;\r\n    align-items: center;\r\n    width: 50%;\r\n}\r\n\r\n.tournamentLeftContent {\r\n    display: flex;\r\n    flex-direction: column;\r\n    width: 50%;\r\n}\r\n\r\n.subLeftContent {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    align-items: center;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.gameMenu {\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    background-color: #28283b;\r\n    width: 10%;\r\n    height: 100%;\r\n}\r\n\r\n.imgGameMenu {\r\n    width: 50%;\r\n    height: 50%;\r\n    background-image: #ffffff;\r\n}\r\n\r\n.mainContent {\r\n    display: flex;\r\n    flex-direction: column;\r\n    color: #ffffff;\r\n    background-color: #1e3044;\r\n    width: 90%;\r\n    height: 90%;\r\n    padding: 10%;\r\n}\r\n\r\n.contentMenu {\r\n\r\n}\r\n\r\n.tournamentTable {\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n\r\n}\r\n.tournamentTableContent {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-between;\r\n    align-items: center;\r\n    \r\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -9,25 +9,25 @@ Route::get('/', function () {
 });
 
 // player
-Route::get('/signin', 'playerController@index');
+// Route::get('/signin', 'playerController@index');
 
-Route::get('/signin', 'playerController@create');
+// Route::get('/signin', 'playerController@create');
 
-Route::post('/signin', 'playerController@store');
+// Route::post('/signin', 'playerController@store');
 
-Route::get('/signin', 'playerController@show');
+// Route::get('/signin', 'playerController@show');
 
-Route::get('/signin', 'playerController@edit');
+// Route::get('/signin', 'playerController@edit');
 
-Route::post('/signin', 'playerController@update');
+// Route::post('/signin', 'playerController@update');
 
-Route::get('/signin', 'playerController@destroy');
+// Route::get('/signin', 'playerController@destroy');
 
 
-// tournament
-Route::get('/tournaments', 'tournamentController@index');
+// // tournament
+// Route::get('/tournaments', 'tournamentController@index');
 
-Route::post('/tournaments', 'tournamentCOntroller@registerTournament');
+// Route::post('/tournaments', 'tournamentCOntroller@registerTournament');
 
 // champion
 

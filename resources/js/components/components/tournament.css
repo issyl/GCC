@@ -7,6 +7,7 @@
     background-size: cover;
     flex-direction: row;
     justify-content: center;
+    padding-top: 10vh;
 }
 
 .tournamentRightContent {
@@ -40,7 +41,7 @@
     align-items: center;
     background-color: #28283b;
     width: 10%;
-    height: 90%;
+    height: 100%;
 }
 
 .imgGameMenu {
@@ -52,16 +53,28 @@
 .mainContent {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     color: #ffffff;
     background-color: #1e3044;
     width: 90%;
     height: 90%;
+    padding: 10%;
 }
 
 .contentMenu {
+
 }
 
 .tournamentTable {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+.tournamentTableContent {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    
 }
