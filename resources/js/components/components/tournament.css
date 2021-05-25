@@ -29,9 +29,10 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
+    /* align-items: center; */
     width: 100%;
     height: 100%;
+    padding-top: 10%;
 }
 
 .gameMenu {
@@ -41,22 +42,31 @@
     align-items: center;
     background-color: #28283b;
     width: 10%;
-    height: 100%;
+    height: 15%;
+    border-radius: 10px;
+    border-radius: 10px 0px 0px 10px;
 }
 
 .imgGameMenu {
-    width: 50%;
-    height: 50%;
+    width: 30%;
+    height: auto;
+    margin: 15%;
+}
+
+.imgGameMenu::after {
+    border-right: #e41376;
 }
 
 .mainContent {
     display: flex;
     flex-direction: column;
+    align-items: center;
     color: #ffffff;
     background-color: #1e3044;
-    width: 90%;
-    height: 90%;
-    padding: 10%;
+    width: 60%;
+    height: 60%;
+    padding: 5%;
+    border-radius: 0px 10px 10px 10px;
 }
 
 .contentMenu {
@@ -68,7 +78,7 @@
 
 .contentMenu a {
     text-decoration: none;
-    font-size: 16pt;
+    font-size: 14pt;
     color: #ffffff;
 }
 
@@ -76,11 +86,19 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    width: 100%;
 }
 .tournamentTableContent {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background-color: #e41376;
+    margin-top: 5%;
+    border-radius: 5pt;
+    padding: 2%;
+}
+.tournamentTableContent h3 {
+    color: #fff;
+    width: 25%;
 }

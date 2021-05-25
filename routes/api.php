@@ -14,7 +14,7 @@ use App\Http\Controllers\tournamentController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */ 
-Route::get('/tournaments', [tournamentController::class, 'index']);
+Route::get('/tournament', [tournamentController::class, 'index']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

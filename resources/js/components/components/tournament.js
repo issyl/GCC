@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import apexLegend from "../img/apex.svg";
-import valorant from "../img/valorant.svg";
+import apexLegend from "../img/apex-logo.png";
+import valorant from "../img/valorant-logo.png";
 import axios from "axios";
 import "./tournament.css";
 
@@ -14,9 +14,9 @@ class tournament extends Component {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         axios
-            .get("/api/tournaments")
+            .get("/api/tournament")
             .then((response) => {
                 this.setState({
                     Tournaments: response.data,
@@ -40,6 +40,7 @@ class tournament extends Component {
                         <div className="mainContent">
                             <div className="contentMenu">
                                 <a>ACTIVE TOURNAMENT</a>
+                                <a>|</a>
                                 <a>FINISHED TOURNAMENT</a>
                             </div>
                             <div className="tournamentTable">

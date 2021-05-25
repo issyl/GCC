@@ -16,8 +16,12 @@ class CreateTournamentsTable extends Migration
         Schema::create('tournaments', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->String('name');
-            $table->String('teams');
-            $table->String('gameId');
+            $table->String('team');
+            $table->foreign('team')->references('team')->on('players')->onDelete('cascade');
+            $table->String('game_id');
+            $table->foreign('game_id')->references('id')->on('games')->onDelete('cascade');
+            $table->String('server_id');
+            $table->foreign('server_id')->references('id')->on('servers')->onDelete('cascade');
             $table->date('date');
             $table->String('prize');
             $table->timestamps();

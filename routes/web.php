@@ -3,6 +3,7 @@
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\playerController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\tournamentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,7 +26,7 @@ Route::get('/', function () {
 
 
 // // tournament
-// Route::get('/tournaments', 'tournamentController@index');
+// Route::get('/tournament', [tournamentController::class, 'index']);
 
 // Route::post('/tournaments', 'tournamentCOntroller@registerTournament');
 

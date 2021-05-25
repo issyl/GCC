@@ -57,7 +57,7 @@ class signIn extends Component {
                         >
                             SIGN IN
                         </button>
-                        <a href="/forgotPassword">forgot password?</a>
+                        <Link to="/forgotPassword"><a>forgot password?</a></Link>
                         <img src={line} className="formSeparation"></img>
                     </form>
                     <Link to="/signUp" className="signUpSize">

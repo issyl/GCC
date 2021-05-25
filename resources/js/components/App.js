@@ -31,7 +31,7 @@ class App extends Component {
                                 </Route>
                                 <Route exact path="/tournament">
                                     <Tournament />
-                            </Route>
+                                </Route>
                                 <Footer />
                             </>
                         </Switch>

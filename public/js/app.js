@@ -2146,27 +2146,49 @@ var footer = function footer() {
       className: "footerContent",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("ul", {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-          children: "Instagram"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-          children: "Twitter"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-          children: "Twitch"
+          children: "CONTACT US!"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
+          href: "https://www.instagram.com/ilham_tawakhal/",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
+            children: "@Instagram"
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
+          href: "https://twitter.com/Ilham_tawakhal",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
+            children: "@Twitter"
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
+          href: "https://www.twitch.tv/itash__",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
+            children: "@Twitch"
+          })
         })]
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
       className: "footerContent",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-        children: "copyright by me @ 2021"
+        children: "Copyright by me @2021"
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
       className: "footerContent",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("ul", {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-          children: "Instagram"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-          children: "Twitter"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-          children: "Twitch"
+          children: "CONTACT US!"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
+          href: "https://www.instagram.com/ilham_tawakhal/",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
+            children: "@Instagram"
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
+          href: "https://twitter.com/Ilham_tawakhal",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
+            children: "@Twitter"
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
+          href: "https://www.twitch.tv/itash__",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
+            children: "@Twitch"
+          })
         })]
       })
     })]
@@ -2189,7 +2211,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -2228,9 +2252,9 @@ var forgotPassword = function forgotPassword() {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h3", {
       style: forgotPasswordText,
       children: "password is a credential variable for us. try to remember what password were you using. this is why you should not use random things as your important variable of your account's password"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("a", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)(react_router_dom__WEBPACK_IMPORTED_MODULE_2__.Link, {
       style: goBack,
-      href: "/signIn",
+      to: "/signIn",
       children: [" ", "Go Back"]
     })]
   });
@@ -2469,9 +2493,11 @@ var signIn = /*#__PURE__*/function (_Component) {
               type: "submit",
               name: "signIn",
               children: "SIGN IN"
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("a", {
-              href: "/forgotPassword",
-              children: "forgot password?"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Link, {
+              to: "/forgotPassword",
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("a", {
+                children: "forgot password?"
+              })
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("img", {
               src: _img_Line_png__WEBPACK_IMPORTED_MODULE_2__.default,
               className: "formSeparation"
@@ -2724,8 +2750,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var _img_apex_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../img/apex.svg */ "./resources/js/components/img/apex.svg");
-/* harmony import */ var _img_valorant_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../img/valorant.svg */ "./resources/js/components/img/valorant.svg");
+/* harmony import */ var _img_apex_logo_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../img/apex-logo.png */ "./resources/js/components/img/apex-logo.png");
+/* harmony import */ var _img_valorant_logo_png__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../img/valorant-logo.png */ "./resources/js/components/img/valorant-logo.png");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _tournament_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tournament.css */ "./resources/js/components/components/tournament.css");
@@ -2779,11 +2805,11 @@ var tournament = /*#__PURE__*/function (_Component) {
   }
 
   _createClass(tournament, [{
-    key: "componentWillMount",
-    value: function componentWillMount() {
+    key: "componentDidMount",
+    value: function componentDidMount() {
       var _this2 = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_3___default().get("/api/tournaments").then(function (response) {
+      axios__WEBPACK_IMPORTED_MODULE_3___default().get("/api/tournament").then(function (response) {
         _this2.setState({
           Tournaments: response.data
         });
@@ -2805,10 +2831,10 @@ var tournament = /*#__PURE__*/function (_Component) {
               className: "gameMenu",
               children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("img", {
                 className: "imgGameMenu",
-                src: _img_apex_svg__WEBPACK_IMPORTED_MODULE_1__.default
+                src: _img_apex_logo_png__WEBPACK_IMPORTED_MODULE_1__.default
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("img", {
                 className: "imgGameMenu",
-                src: _img_valorant_svg__WEBPACK_IMPORTED_MODULE_2__.default
+                src: _img_valorant_logo_png__WEBPACK_IMPORTED_MODULE_2__.default
               })]
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
               className: "mainContent",
@@ -2816,6 +2842,8 @@ var tournament = /*#__PURE__*/function (_Component) {
                 className: "contentMenu",
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("a", {
                   children: "ACTIVE TOURNAMENT"
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("a", {
+                  children: "|"
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("a", {
                   children: "FINISHED TOURNAMENT"
                 })]
@@ -7341,7 +7369,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "#footer {\r\n  background-color: #1e3044;\r\n  height: 30vh;\r\n  width: 100%;\r\n  padding: 0;\r\n  margin: 0;\r\n  box-shadow: 0px -5px 8px #e41376;\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: center;\r\n  align-items: center;\r\n  color: #ffffff;\r\n}\r\n\r\n.footerContent {\r\n    margin: 10%;\r\n}\r\n\r\n.footerContent ul {\r\n  list-style: none;\r\n}\r\n\r\n.footerContent ul li {\r\n  font-family: Arial, Helvetica, sans-serif;\r\n  margin-top: 5%;\r\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "#footer {\r\n    background-color: #1e3044;\r\n    height: 30vh;\r\n    width: 100%;\r\n    padding: 0;\r\n    margin: 0;\r\n    box-shadow: 0px -5px 8px #e41376;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    align-items: center;\r\n    color: #ffffff;\r\n}\r\n\r\n.footerContent {\r\n    margin: 10%;\r\n}\r\n\r\n.footerContent ul {\r\n    list-style: none;\r\n}\r\n\r\n.footerContent ul li {\r\n    font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen,\r\n        Ubuntu, Cantarell, \"Open Sans\", \"Helvetica Neue\", sans-serif;\r\n    margin-top: 5%;\r\n    font-size: 12pt;\r\n    text-decoration: none;\r\n    color: #fff;\r\n}\r\n\r\n.footerContent a {\r\n  text-decoration: none;\r\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -7539,7 +7567,7 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 var ___CSS_LOADER_URL_REPLACEMENT_0___ = _node_modules_css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_1___default()(_img_background_png__WEBPACK_IMPORTED_MODULE_2__.default);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "#tournament {\r\n    background-color: #10131c;\r\n    background-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\r\n    height: 100vh;\r\n    width: 100%;\r\n    display: flex;\r\n    background-size: cover;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    padding-top: 10vh;\r\n}\r\n\r\n.tournamentRightContent {\r\n    display: flex;\r\n    flex-direction: column;\r\n    color: #ffffff;\r\n    justify-content: center;\r\n    align-items: center;\r\n    width: 50%;\r\n}\r\n\r\n.tournamentLeftContent {\r\n    display: flex;\r\n    flex-direction: column;\r\n    width: 50%;\r\n}\r\n\r\n.subLeftContent {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    align-items: center;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.gameMenu {\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    background-color: #28283b;\r\n    width: 10%;\r\n    height: 100%;\r\n}\r\n\r\n.imgGameMenu {\r\n    width: 50%;\r\n    height: 50%;\r\n}\r\n\r\n.mainContent {\r\n    display: flex;\r\n    flex-direction: column;\r\n    color: #ffffff;\r\n    background-color: #1e3044;\r\n    width: 90%;\r\n    height: 90%;\r\n    padding: 10%;\r\n}\r\n\r\n.contentMenu {\r\n    width: 100%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n.contentMenu a {\r\n    text-decoration: none;\r\n    font-size: 16pt;\r\n    color: #ffffff;\r\n}\r\n\r\n.tournamentTable {\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n}\r\n.tournamentTableContent {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-between;\r\n    align-items: center;\r\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "#tournament {\r\n    background-color: #10131c;\r\n    background-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\r\n    height: 100vh;\r\n    width: 100%;\r\n    display: flex;\r\n    background-size: cover;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    padding-top: 10vh;\r\n}\r\n\r\n.tournamentRightContent {\r\n    display: flex;\r\n    flex-direction: column;\r\n    color: #ffffff;\r\n    justify-content: center;\r\n    align-items: center;\r\n    width: 50%;\r\n}\r\n\r\n.tournamentLeftContent {\r\n    display: flex;\r\n    flex-direction: column;\r\n    width: 50%;\r\n}\r\n\r\n.subLeftContent {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    /* align-items: center; */\r\n    width: 100%;\r\n    height: 100%;\r\n    padding-top: 10%;\r\n}\r\n\r\n.gameMenu {\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    background-color: #28283b;\r\n    width: 10%;\r\n    height: 15%;\r\n    border-radius: 10px;\r\n    border-radius: 10px 0px 0px 10px;\r\n}\r\n\r\n.imgGameMenu {\r\n    width: 30%;\r\n    height: auto;\r\n    margin: 15%;\r\n}\r\n\r\n.imgGameMenu::after {\r\n    border-right: #e41376;\r\n}\r\n\r\n.mainContent {\r\n    display: flex;\r\n    flex-direction: column;\r\n    align-items: center;\r\n    color: #ffffff;\r\n    background-color: #1e3044;\r\n    width: 60%;\r\n    height: 60%;\r\n    padding: 5%;\r\n    border-radius: 0px 10px 10px 10px;\r\n}\r\n\r\n.contentMenu {\r\n    width: 100%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n.contentMenu a {\r\n    text-decoration: none;\r\n    font-size: 14pt;\r\n    color: #ffffff;\r\n}\r\n\r\n.tournamentTable {\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n.tournamentTableContent {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    text-decoration: none;\r\n    background-color: #e41376;\r\n    margin-top: 5%;\r\n    border-radius: 5pt;\r\n    padding: 2%;\r\n}\r\n.tournamentTableContent h3 {\r\n    color: #fff;\r\n    width: 25%;\r\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -7756,10 +7784,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/img/apex.svg":
-/*!**********************************************!*\
-  !*** ./resources/js/components/img/apex.svg ***!
-  \**********************************************/
+/***/ "./resources/js/components/img/apex-logo.png":
+/*!***************************************************!*\
+  !*** ./resources/js/components/img/apex-logo.png ***!
+  \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -7767,7 +7795,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/apex.svg?48265c3cb8d67ee5f75894c6ad7e03df");
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/apex-logo.png?042d22e7c02a25d2375ecf4900be8149");
 
 /***/ }),
 
@@ -7846,10 +7874,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/img/valorant.svg":
-/*!**************************************************!*\
-  !*** ./resources/js/components/img/valorant.svg ***!
-  \**************************************************/
+/***/ "./resources/js/components/img/valorant-logo.png":
+/*!*******************************************************!*\
+  !*** ./resources/js/components/img/valorant-logo.png ***!
+  \*******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -7857,7 +7885,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/valorant.svg?d8ed62dfb8de97241b766926d564fc06");
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/valorant-logo.png?5e5651a53ceb0f05bd3643e3bfbb21c5");
 
 /***/ }),
 
