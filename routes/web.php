@@ -9,6 +9,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/admin', function () {
+    return view('/vendor/components/welcome');
+});
+
 // player
 // Route::get('/signin', 'playerController@index');
 
@@ -35,9 +39,9 @@ Route::get('/', function () {
 
 // 
 
-// Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-//     return view('dashboard');
-// })->name('dashboard');
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
 
 // Route::get('/user/{id}', function($id){
 //     return '$id';
