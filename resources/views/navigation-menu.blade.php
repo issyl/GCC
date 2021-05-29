@@ -16,6 +16,36 @@
                         {{ __('Dashboard') }}
                     </x-jet-nav-link>
                 </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-jet-nav-link href="/dashboard/users" :active="request()->routeIs('dashboard/users')">
+                        {{ __('Users') }}
+                    </x-jet-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-jet-nav-link href="/dashboard/tournaments" :active="request()->routeIs('dashboard/tournaments')">
+                        {{ __('Tournaments') }}
+                    </x-jet-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-jet-nav-link href="/dashboard/players" :active="request()->routeIs('dashboard/players')">
+                        {{ __('Players') }}
+                    </x-jet-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-jet-nav-link href="/dashboard/regions" :active="request()->routeIs('dashboard/regions')">
+                        {{ __('Regions') }}
+                    </x-jet-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-jet-nav-link href="/dashboard/games" :active="request()->routeIs('dashboard/games')">
+                        {{ __('Games') }}
+                    </x-jet-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-jet-nav-link href="/" :active="request()->routeIs('/')">
+                        {{ __('Website') }}
+                    </x-jet-nav-link>
+                </div>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">

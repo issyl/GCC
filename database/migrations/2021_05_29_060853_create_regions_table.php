@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateServersTable extends Migration
+class CreateRegionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateServersTable extends Migration
      */
     public function up()
     {
-        Schema::create('servers', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->String('server');
+        Schema::create('regions', function (Blueprint $table) {
+            $table->id();
+            $table->String('region');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ class CreateServersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('servers');
+        Schema::dropIfExists('regions');
     }
 }

@@ -1,48 +1,30 @@
 <?php
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\playerController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\tournamentController;
+use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\RegionController;
+use App\Http\Controllers\GameController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/admin', function () {
-    return view('/vendor/components/welcome');
-});
+Route::prefix('dashboard')
+    ->middleware(['auth:sanctum','verified'])
+    ->group(function(){
+        Route::get('/',[DashboardController::class,'index'])->name('dashboard');
+        Route::resource('users', UserController::class);        
+        Route::resource('tournaments', tournamentController::class);
+        Route::resource('players', PlayerController::class);
+        Route::resource('regions', RegionController::class);
+        Route::resource('games', GameController::class);
 
-// player
-// Route::get('/signin', 'playerController@index');
+        // Route::get('transaksi/{id}/status/{status}',[TransaksiController::class,'changeStatus'])->name('transaksi.changeStatus');
+        // Route::resource('transaksi', TransaksiController::class);        
+    });
 
-// Route::get('/signin', 'playerController@create');
-
-// Route::post('/signin', 'playerController@store');
-
-// Route::get('/signin', 'playerController@show');
-
-// Route::get('/signin', 'playerController@edit');
-
-// Route::post('/signin', 'playerController@update');
-
-// Route::get('/signin', 'playerController@destroy');
-
-
-// // tournament
-// Route::get('/tournament', [tournamentController::class, 'index']);
-
-// Route::post('/tournaments', 'tournamentCOntroller@registerTournament');
-
-// champion
-
-
-// 
-
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
-
-// Route::get('/user/{id}', function($id){
-//     return '$id';
-// });
+    Route::get('/', [tournamentController::class,'katalog']);

@@ -12,11 +12,40 @@ class tournamentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    // public function index()
+    // {
+    //     $tournaments = Tournament::all();
+
+    //     return $tournaments->toJson();
+    // }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        $tournaments = Tournament::all();
+        // $tournaments = Tournament::paginate(10);
+        $tournaments = Tournament::join('games', 'tournaments.games_id', '=', 'games.id')
+            ->join('servers', 'tournaments.server_id', '=', 'servers.id')
+            ->select('tournament.*', 'games.game', 'servers.server')
+            ->get();
 
-        return $tournaments->toJson();
+        return view('tournaments.index', [
+            'tournaments' => $tournaments
+        ]);
+    }
+
+    public function katalog()
+    {
+
+        $katalog = Tournament::get();
+        // $testi = Testimonial::get();
+        return view('welcome', [
+            'katalog' => $katalog,
+            // 'testi' => $testi
+        ]);
     }
 
     /**
@@ -26,7 +55,7 @@ class tournamentController extends Controller
      */
     public function create()
     {
-        //
+        return view('tournaments.create');
     }
 
     /**
@@ -37,7 +66,13 @@ class tournamentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+
+        // $data['picturePath'] = $request->file('picturePath')->store('assets/tournaments', 'public');
+
+        Tournament::create($data);
+
+        return redirect()->route('tournaments.index');
     }
 
     /**
@@ -48,9 +83,7 @@ class tournamentController extends Controller
      */
     public function show($id)
     {
-        $tournament = tournament::find($id);
-
-        return $tournament->toJson();
+        //
     }
 
     /**
@@ -59,9 +92,11 @@ class tournamentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Tournament $tournaments)
     {
-        //
+        return view('tournaments.edit', [
+            'item' => $tournaments
+        ]);
     }
 
     /**
@@ -71,9 +106,13 @@ class tournamentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Tournament $tournaments)
     {
-        //
+        $data = $request->all();
+
+        $tournaments->update($data);
+
+        return redirect()->route('tournaments.index');
     }
 
     /**
@@ -82,8 +121,9 @@ class tournamentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Tournament $tournaments)
     {
-        //
+        $tournaments->delete();
+        return redirect()->route('tournaments.index');
     }
 }

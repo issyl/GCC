@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Players;
+use App\Models\Region;
 use Illuminate\Http\Request;
-use App\Http\Requests\PlayerRequest;
+use App\Http\Requests\GameRequest;
 use Illuminate\Support\Facades\Hash;
 
-class PlayerController extends Controller
+class RegionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,10 +16,10 @@ class PlayerController extends Controller
      */
     public function index()
     {
-        $player = Players::paginate(10);
+        $region = Region::paginate(10);
 
-        return view('players.index', [
-            'player' => $player
+        return view('regions.index', [
+            'region' => $region
         ]);
     }
 
@@ -30,7 +30,7 @@ class PlayerController extends Controller
      */
     public function create()
     {
-        return view('players.create');
+        return view('regions.create');
     }
 
     /**
@@ -41,37 +41,33 @@ class PlayerController extends Controller
      */
     public function store(Request $request)
     {
-        Players::create([
-            'name' => $request->name,
-            'team' => $request->team,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+        Region::create([
+            'region' => $request->region,
         ]);
 
-        return redirect()->route('players.index');
+        return redirect()->route('regions.index');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Players  $player
+     * @param  \App\Models\Region  $region
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
-    public function show(Players $player)
+    public function show(Region $region)
     {
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Players  $player
+     * @param  \App\Models\Region  $region
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
-    public function edit(Players $player)
+    public function edit(Region $region)
     {
-        return view('players.edit', [
-            'item' => $player
+        return view('regions.edit', [
+            'item' => $region
         ]);
     }
 
@@ -79,32 +75,32 @@ class PlayerController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Players  $player
+     * @param  \App\Models\Region  $region
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Players $player)
+    public function update(Request $request, Region $region)
     {
         $data = $request->all();
 
         // if ($request->file('profile_photo_paths')) {
-        //     $data['profile_photo_path'] = $request->file('profile_photo_path')->store('assets/player', 'public');
+        //     $data['profile_photo_path'] = $request->file('profile_photo_path')->store('assets/region', 'public');
         // }
 
-        $player->update($data);
+        $region->update($data);
 
-        return redirect()->route('players.index');
+        return redirect()->route('regions.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Players  $player
+     * @param  \App\Models\Region  $region
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Players $player)
+    public function destroy(Region $region)
     {
-        $player->delete();
+        $region->delete();
 
-        return redirect()->route('players.index');
+        return redirect()->route('regions.index');
     }
 }

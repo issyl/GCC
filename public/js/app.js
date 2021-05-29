@@ -103,6 +103,1964 @@ function _setPrototypeOf(o, p) {
 
 /***/ }),
 
+/***/ "./node_modules/alpinejs/dist/alpine.js":
+/*!**********************************************!*\
+  !*** ./node_modules/alpinejs/dist/alpine.js ***!
+  \**********************************************/
+/***/ (function(module) {
+
+(function (global, factory) {
+   true ? module.exports = factory() :
+  0;
+}(this, (function () { 'use strict';
+
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+
+    return obj;
+  }
+
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      if (enumerableOnly) symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+
+      if (i % 2) {
+        ownKeys(Object(source), true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(Object(source)).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+    }
+
+    return target;
+  }
+
+  // Thanks @stimulus:
+  // https://github.com/stimulusjs/stimulus/blob/master/packages/%40stimulus/core/src/application.ts
+  function domReady() {
+    return new Promise(resolve => {
+      if (document.readyState == "loading") {
+        document.addEventListener("DOMContentLoaded", resolve);
+      } else {
+        resolve();
+      }
+    });
+  }
+  function arrayUnique(array) {
+    return Array.from(new Set(array));
+  }
+  function isTesting() {
+    return navigator.userAgent.includes("Node.js") || navigator.userAgent.includes("jsdom");
+  }
+  function checkedAttrLooseCompare(valueA, valueB) {
+    return valueA == valueB;
+  }
+  function warnIfMalformedTemplate(el, directive) {
+    if (el.tagName.toLowerCase() !== 'template') {
+      console.warn(`Alpine: [${directive}] directive should only be added to <template> tags. See https://github.com/alpinejs/alpine#${directive}`);
+    } else if (el.content.childElementCount !== 1) {
+      console.warn(`Alpine: <template> tag with [${directive}] encountered with an unexpected number of root elements. Make sure <template> has a single root element. `);
+    }
+  }
+  function kebabCase(subject) {
+    return subject.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/[_\s]/, '-').toLowerCase();
+  }
+  function camelCase(subject) {
+    return subject.toLowerCase().replace(/-(\w)/g, (match, char) => char.toUpperCase());
+  }
+  function walk(el, callback) {
+    if (callback(el) === false) return;
+    let node = el.firstElementChild;
+
+    while (node) {
+      walk(node, callback);
+      node = node.nextElementSibling;
+    }
+  }
+  function debounce(func, wait) {
+    var timeout;
+    return function () {
+      var context = this,
+          args = arguments;
+
+      var later = function later() {
+        timeout = null;
+        func.apply(context, args);
+      };
+
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  const handleError = (el, expression, error) => {
+    console.warn(`Alpine Error: "${error}"\n\nExpression: "${expression}"\nElement:`, el);
+
+    if (!isTesting()) {
+      Object.assign(error, {
+        el,
+        expression
+      });
+      throw error;
+    }
+  };
+
+  function tryCatch(cb, {
+    el,
+    expression
+  }) {
+    try {
+      const value = cb();
+      return value instanceof Promise ? value.catch(e => handleError(el, expression, e)) : value;
+    } catch (e) {
+      handleError(el, expression, e);
+    }
+  }
+
+  function saferEval(el, expression, dataContext, additionalHelperVariables = {}) {
+    return tryCatch(() => {
+      if (typeof expression === 'function') {
+        return expression.call(dataContext);
+      }
+
+      return new Function(['$data', ...Object.keys(additionalHelperVariables)], `var __alpine_result; with($data) { __alpine_result = ${expression} }; return __alpine_result`)(dataContext, ...Object.values(additionalHelperVariables));
+    }, {
+      el,
+      expression
+    });
+  }
+  function saferEvalNoReturn(el, expression, dataContext, additionalHelperVariables = {}) {
+    return tryCatch(() => {
+      if (typeof expression === 'function') {
+        return Promise.resolve(expression.call(dataContext, additionalHelperVariables['$event']));
+      }
+
+      let AsyncFunction = Function;
+      /* MODERN-ONLY:START */
+
+      AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+      /* MODERN-ONLY:END */
+      // For the cases when users pass only a function reference to the caller: `x-on:click="foo"`
+      // Where "foo" is a function. Also, we'll pass the function the event instance when we call it.
+
+      if (Object.keys(dataContext).includes(expression)) {
+        let methodReference = new Function(['dataContext', ...Object.keys(additionalHelperVariables)], `with(dataContext) { return ${expression} }`)(dataContext, ...Object.values(additionalHelperVariables));
+
+        if (typeof methodReference === 'function') {
+          return Promise.resolve(methodReference.call(dataContext, additionalHelperVariables['$event']));
+        } else {
+          return Promise.resolve();
+        }
+      }
+
+      return Promise.resolve(new AsyncFunction(['dataContext', ...Object.keys(additionalHelperVariables)], `with(dataContext) { ${expression} }`)(dataContext, ...Object.values(additionalHelperVariables)));
+    }, {
+      el,
+      expression
+    });
+  }
+  const xAttrRE = /^x-(on|bind|data|text|html|model|if|for|show|cloak|transition|ref|spread)\b/;
+  function isXAttr(attr) {
+    const name = replaceAtAndColonWithStandardSyntax(attr.name);
+    return xAttrRE.test(name);
+  }
+  function getXAttrs(el, component, type) {
+    let directives = Array.from(el.attributes).filter(isXAttr).map(parseHtmlAttribute); // Get an object of directives from x-spread.
+
+    let spreadDirective = directives.filter(directive => directive.type === 'spread')[0];
+
+    if (spreadDirective) {
+      let spreadObject = saferEval(el, spreadDirective.expression, component.$data); // Add x-spread directives to the pile of existing directives.
+
+      directives = directives.concat(Object.entries(spreadObject).map(([name, value]) => parseHtmlAttribute({
+        name,
+        value
+      })));
+    }
+
+    if (type) return directives.filter(i => i.type === type);
+    return sortDirectives(directives);
+  }
+
+  function sortDirectives(directives) {
+    let directiveOrder = ['bind', 'model', 'show', 'catch-all'];
+    return directives.sort((a, b) => {
+      let typeA = directiveOrder.indexOf(a.type) === -1 ? 'catch-all' : a.type;
+      let typeB = directiveOrder.indexOf(b.type) === -1 ? 'catch-all' : b.type;
+      return directiveOrder.indexOf(typeA) - directiveOrder.indexOf(typeB);
+    });
+  }
+
+  function parseHtmlAttribute({
+    name,
+    value
+  }) {
+    const normalizedName = replaceAtAndColonWithStandardSyntax(name);
+    const typeMatch = normalizedName.match(xAttrRE);
+    const valueMatch = normalizedName.match(/:([a-zA-Z0-9\-:]+)/);
+    const modifiers = normalizedName.match(/\.[^.\]]+(?=[^\]]*$)/g) || [];
+    return {
+      type: typeMatch ? typeMatch[1] : null,
+      value: valueMatch ? valueMatch[1] : null,
+      modifiers: modifiers.map(i => i.replace('.', '')),
+      expression: value
+    };
+  }
+  function isBooleanAttr(attrName) {
+    // As per HTML spec table https://html.spec.whatwg.org/multipage/indices.html#attributes-3:boolean-attribute
+    // Array roughly ordered by estimated usage
+    const booleanAttributes = ['disabled', 'checked', 'required', 'readonly', 'hidden', 'open', 'selected', 'autofocus', 'itemscope', 'multiple', 'novalidate', 'allowfullscreen', 'allowpaymentrequest', 'formnovalidate', 'autoplay', 'controls', 'loop', 'muted', 'playsinline', 'default', 'ismap', 'reversed', 'async', 'defer', 'nomodule'];
+    return booleanAttributes.includes(attrName);
+  }
+  function replaceAtAndColonWithStandardSyntax(name) {
+    if (name.startsWith('@')) {
+      return name.replace('@', 'x-on:');
+    } else if (name.startsWith(':')) {
+      return name.replace(':', 'x-bind:');
+    }
+
+    return name;
+  }
+  function convertClassStringToArray(classList, filterFn = Boolean) {
+    return classList.split(' ').filter(filterFn);
+  }
+  const TRANSITION_TYPE_IN = 'in';
+  const TRANSITION_TYPE_OUT = 'out';
+  const TRANSITION_CANCELLED = 'cancelled';
+  function transitionIn(el, show, reject, component, forceSkip = false) {
+    // We don't want to transition on the initial page load.
+    if (forceSkip) return show();
+
+    if (el.__x_transition && el.__x_transition.type === TRANSITION_TYPE_IN) {
+      // there is already a similar transition going on, this was probably triggered by
+      // a change in a different property, let's just leave the previous one doing its job
+      return;
+    }
+
+    const attrs = getXAttrs(el, component, 'transition');
+    const showAttr = getXAttrs(el, component, 'show')[0]; // If this is triggered by a x-show.transition.
+
+    if (showAttr && showAttr.modifiers.includes('transition')) {
+      let modifiers = showAttr.modifiers; // If x-show.transition.out, we'll skip the "in" transition.
+
+      if (modifiers.includes('out') && !modifiers.includes('in')) return show();
+      const settingBothSidesOfTransition = modifiers.includes('in') && modifiers.includes('out'); // If x-show.transition.in...out... only use "in" related modifiers for this transition.
+
+      modifiers = settingBothSidesOfTransition ? modifiers.filter((i, index) => index < modifiers.indexOf('out')) : modifiers;
+      transitionHelperIn(el, modifiers, show, reject); // Otherwise, we can assume x-transition:enter.
+    } else if (attrs.some(attr => ['enter', 'enter-start', 'enter-end'].includes(attr.value))) {
+      transitionClassesIn(el, component, attrs, show, reject);
+    } else {
+      // If neither, just show that damn thing.
+      show();
+    }
+  }
+  function transitionOut(el, hide, reject, component, forceSkip = false) {
+    // We don't want to transition on the initial page load.
+    if (forceSkip) return hide();
+
+    if (el.__x_transition && el.__x_transition.type === TRANSITION_TYPE_OUT) {
+      // there is already a similar transition going on, this was probably triggered by
+      // a change in a different property, let's just leave the previous one doing its job
+      return;
+    }
+
+    const attrs = getXAttrs(el, component, 'transition');
+    const showAttr = getXAttrs(el, component, 'show')[0];
+
+    if (showAttr && showAttr.modifiers.includes('transition')) {
+      let modifiers = showAttr.modifiers;
+      if (modifiers.includes('in') && !modifiers.includes('out')) return hide();
+      const settingBothSidesOfTransition = modifiers.includes('in') && modifiers.includes('out');
+      modifiers = settingBothSidesOfTransition ? modifiers.filter((i, index) => index > modifiers.indexOf('out')) : modifiers;
+      transitionHelperOut(el, modifiers, settingBothSidesOfTransition, hide, reject);
+    } else if (attrs.some(attr => ['leave', 'leave-start', 'leave-end'].includes(attr.value))) {
+      transitionClassesOut(el, component, attrs, hide, reject);
+    } else {
+      hide();
+    }
+  }
+  function transitionHelperIn(el, modifiers, showCallback, reject) {
+    // Default values inspired by: https://material.io/design/motion/speed.html#duration
+    const styleValues = {
+      duration: modifierValue(modifiers, 'duration', 150),
+      origin: modifierValue(modifiers, 'origin', 'center'),
+      first: {
+        opacity: 0,
+        scale: modifierValue(modifiers, 'scale', 95)
+      },
+      second: {
+        opacity: 1,
+        scale: 100
+      }
+    };
+    transitionHelper(el, modifiers, showCallback, () => {}, reject, styleValues, TRANSITION_TYPE_IN);
+  }
+  function transitionHelperOut(el, modifiers, settingBothSidesOfTransition, hideCallback, reject) {
+    // Make the "out" transition .5x slower than the "in". (Visually better)
+    // HOWEVER, if they explicitly set a duration for the "out" transition,
+    // use that.
+    const duration = settingBothSidesOfTransition ? modifierValue(modifiers, 'duration', 150) : modifierValue(modifiers, 'duration', 150) / 2;
+    const styleValues = {
+      duration: duration,
+      origin: modifierValue(modifiers, 'origin', 'center'),
+      first: {
+        opacity: 1,
+        scale: 100
+      },
+      second: {
+        opacity: 0,
+        scale: modifierValue(modifiers, 'scale', 95)
+      }
+    };
+    transitionHelper(el, modifiers, () => {}, hideCallback, reject, styleValues, TRANSITION_TYPE_OUT);
+  }
+
+  function modifierValue(modifiers, key, fallback) {
+    // If the modifier isn't present, use the default.
+    if (modifiers.indexOf(key) === -1) return fallback; // If it IS present, grab the value after it: x-show.transition.duration.500ms
+
+    const rawValue = modifiers[modifiers.indexOf(key) + 1];
+    if (!rawValue) return fallback;
+
+    if (key === 'scale') {
+      // Check if the very next value is NOT a number and return the fallback.
+      // If x-show.transition.scale, we'll use the default scale value.
+      // That is how a user opts out of the opacity transition.
+      if (!isNumeric(rawValue)) return fallback;
+    }
+
+    if (key === 'duration') {
+      // Support x-show.transition.duration.500ms && duration.500
+      let match = rawValue.match(/([0-9]+)ms/);
+      if (match) return match[1];
+    }
+
+    if (key === 'origin') {
+      // Support chaining origin directions: x-show.transition.top.right
+      if (['top', 'right', 'left', 'center', 'bottom'].includes(modifiers[modifiers.indexOf(key) + 2])) {
+        return [rawValue, modifiers[modifiers.indexOf(key) + 2]].join(' ');
+      }
+    }
+
+    return rawValue;
+  }
+
+  function transitionHelper(el, modifiers, hook1, hook2, reject, styleValues, type) {
+    // clear the previous transition if exists to avoid caching the wrong styles
+    if (el.__x_transition) {
+      el.__x_transition.cancel && el.__x_transition.cancel();
+    } // If the user set these style values, we'll put them back when we're done with them.
+
+
+    const opacityCache = el.style.opacity;
+    const transformCache = el.style.transform;
+    const transformOriginCache = el.style.transformOrigin; // If no modifiers are present: x-show.transition, we'll default to both opacity and scale.
+
+    const noModifiers = !modifiers.includes('opacity') && !modifiers.includes('scale');
+    const transitionOpacity = noModifiers || modifiers.includes('opacity');
+    const transitionScale = noModifiers || modifiers.includes('scale'); // These are the explicit stages of a transition (same stages for in and for out).
+    // This way you can get a birds eye view of the hooks, and the differences
+    // between them.
+
+    const stages = {
+      start() {
+        if (transitionOpacity) el.style.opacity = styleValues.first.opacity;
+        if (transitionScale) el.style.transform = `scale(${styleValues.first.scale / 100})`;
+      },
+
+      during() {
+        if (transitionScale) el.style.transformOrigin = styleValues.origin;
+        el.style.transitionProperty = [transitionOpacity ? `opacity` : ``, transitionScale ? `transform` : ``].join(' ').trim();
+        el.style.transitionDuration = `${styleValues.duration / 1000}s`;
+        el.style.transitionTimingFunction = `cubic-bezier(0.4, 0.0, 0.2, 1)`;
+      },
+
+      show() {
+        hook1();
+      },
+
+      end() {
+        if (transitionOpacity) el.style.opacity = styleValues.second.opacity;
+        if (transitionScale) el.style.transform = `scale(${styleValues.second.scale / 100})`;
+      },
+
+      hide() {
+        hook2();
+      },
+
+      cleanup() {
+        if (transitionOpacity) el.style.opacity = opacityCache;
+        if (transitionScale) el.style.transform = transformCache;
+        if (transitionScale) el.style.transformOrigin = transformOriginCache;
+        el.style.transitionProperty = null;
+        el.style.transitionDuration = null;
+        el.style.transitionTimingFunction = null;
+      }
+
+    };
+    transition(el, stages, type, reject);
+  }
+
+  const ensureStringExpression = (expression, el, component) => {
+    return typeof expression === 'function' ? component.evaluateReturnExpression(el, expression) : expression;
+  };
+
+  function transitionClassesIn(el, component, directives, showCallback, reject) {
+    const enter = convertClassStringToArray(ensureStringExpression((directives.find(i => i.value === 'enter') || {
+      expression: ''
+    }).expression, el, component));
+    const enterStart = convertClassStringToArray(ensureStringExpression((directives.find(i => i.value === 'enter-start') || {
+      expression: ''
+    }).expression, el, component));
+    const enterEnd = convertClassStringToArray(ensureStringExpression((directives.find(i => i.value === 'enter-end') || {
+      expression: ''
+    }).expression, el, component));
+    transitionClasses(el, enter, enterStart, enterEnd, showCallback, () => {}, TRANSITION_TYPE_IN, reject);
+  }
+  function transitionClassesOut(el, component, directives, hideCallback, reject) {
+    const leave = convertClassStringToArray(ensureStringExpression((directives.find(i => i.value === 'leave') || {
+      expression: ''
+    }).expression, el, component));
+    const leaveStart = convertClassStringToArray(ensureStringExpression((directives.find(i => i.value === 'leave-start') || {
+      expression: ''
+    }).expression, el, component));
+    const leaveEnd = convertClassStringToArray(ensureStringExpression((directives.find(i => i.value === 'leave-end') || {
+      expression: ''
+    }).expression, el, component));
+    transitionClasses(el, leave, leaveStart, leaveEnd, () => {}, hideCallback, TRANSITION_TYPE_OUT, reject);
+  }
+  function transitionClasses(el, classesDuring, classesStart, classesEnd, hook1, hook2, type, reject) {
+    // clear the previous transition if exists to avoid caching the wrong classes
+    if (el.__x_transition) {
+      el.__x_transition.cancel && el.__x_transition.cancel();
+    }
+
+    const originalClasses = el.__x_original_classes || [];
+    const stages = {
+      start() {
+        el.classList.add(...classesStart);
+      },
+
+      during() {
+        el.classList.add(...classesDuring);
+      },
+
+      show() {
+        hook1();
+      },
+
+      end() {
+        // Don't remove classes that were in the original class attribute.
+        el.classList.remove(...classesStart.filter(i => !originalClasses.includes(i)));
+        el.classList.add(...classesEnd);
+      },
+
+      hide() {
+        hook2();
+      },
+
+      cleanup() {
+        el.classList.remove(...classesDuring.filter(i => !originalClasses.includes(i)));
+        el.classList.remove(...classesEnd.filter(i => !originalClasses.includes(i)));
+      }
+
+    };
+    transition(el, stages, type, reject);
+  }
+  function transition(el, stages, type, reject) {
+    const finish = once(() => {
+      stages.hide(); // Adding an "isConnected" check, in case the callback
+      // removed the element from the DOM.
+
+      if (el.isConnected) {
+        stages.cleanup();
+      }
+
+      delete el.__x_transition;
+    });
+    el.__x_transition = {
+      // Set transition type so we can avoid clearing transition if the direction is the same
+      type: type,
+      // create a callback for the last stages of the transition so we can call it
+      // from different point and early terminate it. Once will ensure that function
+      // is only called one time.
+      cancel: once(() => {
+        reject(TRANSITION_CANCELLED);
+        finish();
+      }),
+      finish,
+      // This store the next animation frame so we can cancel it
+      nextFrame: null
+    };
+    stages.start();
+    stages.during();
+    el.__x_transition.nextFrame = requestAnimationFrame(() => {
+      // Note: Safari's transitionDuration property will list out comma separated transition durations
+      // for every single transition property. Let's grab the first one and call it a day.
+      let duration = Number(getComputedStyle(el).transitionDuration.replace(/,.*/, '').replace('s', '')) * 1000;
+
+      if (duration === 0) {
+        duration = Number(getComputedStyle(el).animationDuration.replace('s', '')) * 1000;
+      }
+
+      stages.show();
+      el.__x_transition.nextFrame = requestAnimationFrame(() => {
+        stages.end();
+        setTimeout(el.__x_transition.finish, duration);
+      });
+    });
+  }
+  function isNumeric(subject) {
+    return !Array.isArray(subject) && !isNaN(subject);
+  } // Thanks @vuejs
+  // https://github.com/vuejs/vue/blob/4de4649d9637262a9b007720b59f80ac72a5620c/src/shared/util.js
+
+  function once(callback) {
+    let called = false;
+    return function () {
+      if (!called) {
+        called = true;
+        callback.apply(this, arguments);
+      }
+    };
+  }
+
+  function handleForDirective(component, templateEl, expression, initialUpdate, extraVars) {
+    warnIfMalformedTemplate(templateEl, 'x-for');
+    let iteratorNames = typeof expression === 'function' ? parseForExpression(component.evaluateReturnExpression(templateEl, expression)) : parseForExpression(expression);
+    let items = evaluateItemsAndReturnEmptyIfXIfIsPresentAndFalseOnElement(component, templateEl, iteratorNames, extraVars); // As we walk the array, we'll also walk the DOM (updating/creating as we go).
+
+    let currentEl = templateEl;
+    items.forEach((item, index) => {
+      let iterationScopeVariables = getIterationScopeVariables(iteratorNames, item, index, items, extraVars());
+      let currentKey = generateKeyForIteration(component, templateEl, index, iterationScopeVariables);
+      let nextEl = lookAheadForMatchingKeyedElementAndMoveItIfFound(currentEl.nextElementSibling, currentKey); // If we haven't found a matching key, insert the element at the current position.
+
+      if (!nextEl) {
+        nextEl = addElementInLoopAfterCurrentEl(templateEl, currentEl); // And transition it in if it's not the first page load.
+
+        transitionIn(nextEl, () => {}, () => {}, component, initialUpdate);
+        nextEl.__x_for = iterationScopeVariables;
+        component.initializeElements(nextEl, () => nextEl.__x_for); // Otherwise update the element we found.
+      } else {
+        // Temporarily remove the key indicator to allow the normal "updateElements" to work.
+        delete nextEl.__x_for_key;
+        nextEl.__x_for = iterationScopeVariables;
+        component.updateElements(nextEl, () => nextEl.__x_for);
+      }
+
+      currentEl = nextEl;
+      currentEl.__x_for_key = currentKey;
+    });
+    removeAnyLeftOverElementsFromPreviousUpdate(currentEl, component);
+  } // This was taken from VueJS 2.* core. Thanks Vue!
+
+  function parseForExpression(expression) {
+    let forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
+    let stripParensRE = /^\(|\)$/g;
+    let forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
+    let inMatch = String(expression).match(forAliasRE);
+    if (!inMatch) return;
+    let res = {};
+    res.items = inMatch[2].trim();
+    let item = inMatch[1].trim().replace(stripParensRE, '');
+    let iteratorMatch = item.match(forIteratorRE);
+
+    if (iteratorMatch) {
+      res.item = item.replace(forIteratorRE, '').trim();
+      res.index = iteratorMatch[1].trim();
+
+      if (iteratorMatch[2]) {
+        res.collection = iteratorMatch[2].trim();
+      }
+    } else {
+      res.item = item;
+    }
+
+    return res;
+  }
+
+  function getIterationScopeVariables(iteratorNames, item, index, items, extraVars) {
+    // We must create a new object, so each iteration has a new scope
+    let scopeVariables = extraVars ? _objectSpread2({}, extraVars) : {};
+    scopeVariables[iteratorNames.item] = item;
+    if (iteratorNames.index) scopeVariables[iteratorNames.index] = index;
+    if (iteratorNames.collection) scopeVariables[iteratorNames.collection] = items;
+    return scopeVariables;
+  }
+
+  function generateKeyForIteration(component, el, index, iterationScopeVariables) {
+    let bindKeyAttribute = getXAttrs(el, component, 'bind').filter(attr => attr.value === 'key')[0]; // If the dev hasn't specified a key, just return the index of the iteration.
+
+    if (!bindKeyAttribute) return index;
+    return component.evaluateReturnExpression(el, bindKeyAttribute.expression, () => iterationScopeVariables);
+  }
+
+  function evaluateItemsAndReturnEmptyIfXIfIsPresentAndFalseOnElement(component, el, iteratorNames, extraVars) {
+    let ifAttribute = getXAttrs(el, component, 'if')[0];
+
+    if (ifAttribute && !component.evaluateReturnExpression(el, ifAttribute.expression)) {
+      return [];
+    }
+
+    let items = component.evaluateReturnExpression(el, iteratorNames.items, extraVars); // This adds support for the `i in n` syntax.
+
+    if (isNumeric(items) && items >= 0) {
+      items = Array.from(Array(items).keys(), i => i + 1);
+    }
+
+    return items;
+  }
+
+  function addElementInLoopAfterCurrentEl(templateEl, currentEl) {
+    let clone = document.importNode(templateEl.content, true);
+    currentEl.parentElement.insertBefore(clone, currentEl.nextElementSibling);
+    return currentEl.nextElementSibling;
+  }
+
+  function lookAheadForMatchingKeyedElementAndMoveItIfFound(nextEl, currentKey) {
+    if (!nextEl) return; // If we are already past the x-for generated elements, we don't need to look ahead.
+
+    if (nextEl.__x_for_key === undefined) return; // If the the key's DO match, no need to look ahead.
+
+    if (nextEl.__x_for_key === currentKey) return nextEl; // If they don't, we'll look ahead for a match.
+    // If we find it, we'll move it to the current position in the loop.
+
+    let tmpNextEl = nextEl;
+
+    while (tmpNextEl) {
+      if (tmpNextEl.__x_for_key === currentKey) {
+        return tmpNextEl.parentElement.insertBefore(tmpNextEl, nextEl);
+      }
+
+      tmpNextEl = tmpNextEl.nextElementSibling && tmpNextEl.nextElementSibling.__x_for_key !== undefined ? tmpNextEl.nextElementSibling : false;
+    }
+  }
+
+  function removeAnyLeftOverElementsFromPreviousUpdate(currentEl, component) {
+    var nextElementFromOldLoop = currentEl.nextElementSibling && currentEl.nextElementSibling.__x_for_key !== undefined ? currentEl.nextElementSibling : false;
+
+    while (nextElementFromOldLoop) {
+      let nextElementFromOldLoopImmutable = nextElementFromOldLoop;
+      let nextSibling = nextElementFromOldLoop.nextElementSibling;
+      transitionOut(nextElementFromOldLoop, () => {
+        nextElementFromOldLoopImmutable.remove();
+      }, () => {}, component);
+      nextElementFromOldLoop = nextSibling && nextSibling.__x_for_key !== undefined ? nextSibling : false;
+    }
+  }
+
+  function handleAttributeBindingDirective(component, el, attrName, expression, extraVars, attrType, modifiers) {
+    var value = component.evaluateReturnExpression(el, expression, extraVars);
+
+    if (attrName === 'value') {
+      if (Alpine.ignoreFocusedForValueBinding && document.activeElement.isSameNode(el)) return; // If nested model key is undefined, set the default value to empty string.
+
+      if (value === undefined && String(expression).match(/\./)) {
+        value = '';
+      }
+
+      if (el.type === 'radio') {
+        // Set radio value from x-bind:value, if no "value" attribute exists.
+        // If there are any initial state values, radio will have a correct
+        // "checked" value since x-bind:value is processed before x-model.
+        if (el.attributes.value === undefined && attrType === 'bind') {
+          el.value = value;
+        } else if (attrType !== 'bind') {
+          el.checked = checkedAttrLooseCompare(el.value, value);
+        }
+      } else if (el.type === 'checkbox') {
+        // If we are explicitly binding a string to the :value, set the string,
+        // If the value is a boolean, leave it alone, it will be set to "on"
+        // automatically.
+        if (typeof value !== 'boolean' && ![null, undefined].includes(value) && attrType === 'bind') {
+          el.value = String(value);
+        } else if (attrType !== 'bind') {
+          if (Array.isArray(value)) {
+            // I'm purposely not using Array.includes here because it's
+            // strict, and because of Numeric/String mis-casting, I
+            // want the "includes" to be "fuzzy".
+            el.checked = value.some(val => checkedAttrLooseCompare(val, el.value));
+          } else {
+            el.checked = !!value;
+          }
+        }
+      } else if (el.tagName === 'SELECT') {
+        updateSelect(el, value);
+      } else {
+        if (el.value === value) return;
+        el.value = value;
+      }
+    } else if (attrName === 'class') {
+      if (Array.isArray(value)) {
+        const originalClasses = el.__x_original_classes || [];
+        el.setAttribute('class', arrayUnique(originalClasses.concat(value)).join(' '));
+      } else if (typeof value === 'object') {
+        // Sorting the keys / class names by their boolean value will ensure that
+        // anything that evaluates to `false` and needs to remove classes is run first.
+        const keysSortedByBooleanValue = Object.keys(value).sort((a, b) => value[a] - value[b]);
+        keysSortedByBooleanValue.forEach(classNames => {
+          if (value[classNames]) {
+            convertClassStringToArray(classNames).forEach(className => el.classList.add(className));
+          } else {
+            convertClassStringToArray(classNames).forEach(className => el.classList.remove(className));
+          }
+        });
+      } else {
+        const originalClasses = el.__x_original_classes || [];
+        const newClasses = value ? convertClassStringToArray(value) : [];
+        el.setAttribute('class', arrayUnique(originalClasses.concat(newClasses)).join(' '));
+      }
+    } else {
+      attrName = modifiers.includes('camel') ? camelCase(attrName) : attrName; // If an attribute's bound value is null, undefined or false, remove the attribute
+
+      if ([null, undefined, false].includes(value)) {
+        el.removeAttribute(attrName);
+      } else {
+        isBooleanAttr(attrName) ? setIfChanged(el, attrName, attrName) : setIfChanged(el, attrName, value);
+      }
+    }
+  }
+
+  function setIfChanged(el, attrName, value) {
+    if (el.getAttribute(attrName) != value) {
+      el.setAttribute(attrName, value);
+    }
+  }
+
+  function updateSelect(el, value) {
+    const arrayWrappedValue = [].concat(value).map(value => {
+      return value + '';
+    });
+    Array.from(el.options).forEach(option => {
+      option.selected = arrayWrappedValue.includes(option.value || option.text);
+    });
+  }
+
+  function handleTextDirective(el, output, expression) {
+    // If nested model key is undefined, set the default value to empty string.
+    if (output === undefined && String(expression).match(/\./)) {
+      output = '';
+    }
+
+    el.textContent = output;
+  }
+
+  function handleHtmlDirective(component, el, expression, extraVars) {
+    el.innerHTML = component.evaluateReturnExpression(el, expression, extraVars);
+  }
+
+  function handleShowDirective(component, el, value, modifiers, initialUpdate = false) {
+    const hide = () => {
+      el.style.display = 'none';
+      el.__x_is_shown = false;
+    };
+
+    const show = () => {
+      if (el.style.length === 1 && el.style.display === 'none') {
+        el.removeAttribute('style');
+      } else {
+        el.style.removeProperty('display');
+      }
+
+      el.__x_is_shown = true;
+    };
+
+    if (initialUpdate === true) {
+      if (value) {
+        show();
+      } else {
+        hide();
+      }
+
+      return;
+    }
+
+    const handle = (resolve, reject) => {
+      if (value) {
+        if (el.style.display === 'none' || el.__x_transition) {
+          transitionIn(el, () => {
+            show();
+          }, reject, component);
+        }
+
+        resolve(() => {});
+      } else {
+        if (el.style.display !== 'none') {
+          transitionOut(el, () => {
+            resolve(() => {
+              hide();
+            });
+          }, reject, component);
+        } else {
+          resolve(() => {});
+        }
+      }
+    }; // The working of x-show is a bit complex because we need to
+    // wait for any child transitions to finish before hiding
+    // some element. Also, this has to be done recursively.
+    // If x-show.immediate, foregoe the waiting.
+
+
+    if (modifiers.includes('immediate')) {
+      handle(finish => finish(), () => {});
+      return;
+    } // x-show is encountered during a DOM tree walk. If an element
+    // we encounter is NOT a child of another x-show element we
+    // can execute the previous x-show stack (if one exists).
+
+
+    if (component.showDirectiveLastElement && !component.showDirectiveLastElement.contains(el)) {
+      component.executeAndClearRemainingShowDirectiveStack();
+    }
+
+    component.showDirectiveStack.push(handle);
+    component.showDirectiveLastElement = el;
+  }
+
+  function handleIfDirective(component, el, expressionResult, initialUpdate, extraVars) {
+    warnIfMalformedTemplate(el, 'x-if');
+    const elementHasAlreadyBeenAdded = el.nextElementSibling && el.nextElementSibling.__x_inserted_me === true;
+
+    if (expressionResult && (!elementHasAlreadyBeenAdded || el.__x_transition)) {
+      const clone = document.importNode(el.content, true);
+      el.parentElement.insertBefore(clone, el.nextElementSibling);
+      transitionIn(el.nextElementSibling, () => {}, () => {}, component, initialUpdate);
+      component.initializeElements(el.nextElementSibling, extraVars);
+      el.nextElementSibling.__x_inserted_me = true;
+    } else if (!expressionResult && elementHasAlreadyBeenAdded) {
+      transitionOut(el.nextElementSibling, () => {
+        el.nextElementSibling.remove();
+      }, () => {}, component, initialUpdate);
+    }
+  }
+
+  function registerListener(component, el, event, modifiers, expression, extraVars = {}) {
+    const options = {
+      passive: modifiers.includes('passive')
+    };
+
+    if (modifiers.includes('camel')) {
+      event = camelCase(event);
+    }
+
+    let handler, listenerTarget;
+
+    if (modifiers.includes('away')) {
+      listenerTarget = document;
+
+      handler = e => {
+        // Don't do anything if the click came from the element or within it.
+        if (el.contains(e.target)) return; // Don't do anything if this element isn't currently visible.
+
+        if (el.offsetWidth < 1 && el.offsetHeight < 1) return; // Now that we are sure the element is visible, AND the click
+        // is from outside it, let's run the expression.
+
+        runListenerHandler(component, expression, e, extraVars);
+
+        if (modifiers.includes('once')) {
+          document.removeEventListener(event, handler, options);
+        }
+      };
+    } else {
+      listenerTarget = modifiers.includes('window') ? window : modifiers.includes('document') ? document : el;
+
+      handler = e => {
+        // Remove this global event handler if the element that declared it
+        // has been removed. It's now stale.
+        if (listenerTarget === window || listenerTarget === document) {
+          if (!document.body.contains(el)) {
+            listenerTarget.removeEventListener(event, handler, options);
+            return;
+          }
+        }
+
+        if (isKeyEvent(event)) {
+          if (isListeningForASpecificKeyThatHasntBeenPressed(e, modifiers)) {
+            return;
+          }
+        }
+
+        if (modifiers.includes('prevent')) e.preventDefault();
+        if (modifiers.includes('stop')) e.stopPropagation(); // If the .self modifier isn't present, or if it is present and
+        // the target element matches the element we are registering the
+        // event on, run the handler
+
+        if (!modifiers.includes('self') || e.target === el) {
+          const returnValue = runListenerHandler(component, expression, e, extraVars);
+          returnValue.then(value => {
+            if (value === false) {
+              e.preventDefault();
+            } else {
+              if (modifiers.includes('once')) {
+                listenerTarget.removeEventListener(event, handler, options);
+              }
+            }
+          });
+        }
+      };
+    }
+
+    if (modifiers.includes('debounce')) {
+      let nextModifier = modifiers[modifiers.indexOf('debounce') + 1] || 'invalid-wait';
+      let wait = isNumeric(nextModifier.split('ms')[0]) ? Number(nextModifier.split('ms')[0]) : 250;
+      handler = debounce(handler, wait);
+    }
+
+    listenerTarget.addEventListener(event, handler, options);
+  }
+
+  function runListenerHandler(component, expression, e, extraVars) {
+    return component.evaluateCommandExpression(e.target, expression, () => {
+      return _objectSpread2(_objectSpread2({}, extraVars()), {}, {
+        '$event': e
+      });
+    });
+  }
+
+  function isKeyEvent(event) {
+    return ['keydown', 'keyup'].includes(event);
+  }
+
+  function isListeningForASpecificKeyThatHasntBeenPressed(e, modifiers) {
+    let keyModifiers = modifiers.filter(i => {
+      return !['window', 'document', 'prevent', 'stop'].includes(i);
+    });
+
+    if (keyModifiers.includes('debounce')) {
+      let debounceIndex = keyModifiers.indexOf('debounce');
+      keyModifiers.splice(debounceIndex, isNumeric((keyModifiers[debounceIndex + 1] || 'invalid-wait').split('ms')[0]) ? 2 : 1);
+    } // If no modifier is specified, we'll call it a press.
+
+
+    if (keyModifiers.length === 0) return false; // If one is passed, AND it matches the key pressed, we'll call it a press.
+
+    if (keyModifiers.length === 1 && keyModifiers[0] === keyToModifier(e.key)) return false; // The user is listening for key combinations.
+
+    const systemKeyModifiers = ['ctrl', 'shift', 'alt', 'meta', 'cmd', 'super'];
+    const selectedSystemKeyModifiers = systemKeyModifiers.filter(modifier => keyModifiers.includes(modifier));
+    keyModifiers = keyModifiers.filter(i => !selectedSystemKeyModifiers.includes(i));
+
+    if (selectedSystemKeyModifiers.length > 0) {
+      const activelyPressedKeyModifiers = selectedSystemKeyModifiers.filter(modifier => {
+        // Alias "cmd" and "super" to "meta"
+        if (modifier === 'cmd' || modifier === 'super') modifier = 'meta';
+        return e[`${modifier}Key`];
+      }); // If all the modifiers selected are pressed, ...
+
+      if (activelyPressedKeyModifiers.length === selectedSystemKeyModifiers.length) {
+        // AND the remaining key is pressed as well. It's a press.
+        if (keyModifiers[0] === keyToModifier(e.key)) return false;
+      }
+    } // We'll call it NOT a valid keypress.
+
+
+    return true;
+  }
+
+  function keyToModifier(key) {
+    switch (key) {
+      case '/':
+        return 'slash';
+
+      case ' ':
+      case 'Spacebar':
+        return 'space';
+
+      default:
+        return key && kebabCase(key);
+    }
+  }
+
+  function registerModelListener(component, el, modifiers, expression, extraVars) {
+    // If the element we are binding to is a select, a radio, or checkbox
+    // we'll listen for the change event instead of the "input" event.
+    var event = el.tagName.toLowerCase() === 'select' || ['checkbox', 'radio'].includes(el.type) || modifiers.includes('lazy') ? 'change' : 'input';
+    const listenerExpression = `${expression} = rightSideOfExpression($event, ${expression})`;
+    registerListener(component, el, event, modifiers, listenerExpression, () => {
+      return _objectSpread2(_objectSpread2({}, extraVars()), {}, {
+        rightSideOfExpression: generateModelAssignmentFunction(el, modifiers, expression)
+      });
+    });
+  }
+
+  function generateModelAssignmentFunction(el, modifiers, expression) {
+    if (el.type === 'radio') {
+      // Radio buttons only work properly when they share a name attribute.
+      // People might assume we take care of that for them, because
+      // they already set a shared "x-model" attribute.
+      if (!el.hasAttribute('name')) el.setAttribute('name', expression);
+    }
+
+    return (event, currentValue) => {
+      // Check for event.detail due to an issue where IE11 handles other events as a CustomEvent.
+      if (event instanceof CustomEvent && event.detail) {
+        return event.detail;
+      } else if (el.type === 'checkbox') {
+        // If the data we are binding to is an array, toggle its value inside the array.
+        if (Array.isArray(currentValue)) {
+          const newValue = modifiers.includes('number') ? safeParseNumber(event.target.value) : event.target.value;
+          return event.target.checked ? currentValue.concat([newValue]) : currentValue.filter(el => !checkedAttrLooseCompare(el, newValue));
+        } else {
+          return event.target.checked;
+        }
+      } else if (el.tagName.toLowerCase() === 'select' && el.multiple) {
+        return modifiers.includes('number') ? Array.from(event.target.selectedOptions).map(option => {
+          const rawValue = option.value || option.text;
+          return safeParseNumber(rawValue);
+        }) : Array.from(event.target.selectedOptions).map(option => {
+          return option.value || option.text;
+        });
+      } else {
+        const rawValue = event.target.value;
+        return modifiers.includes('number') ? safeParseNumber(rawValue) : modifiers.includes('trim') ? rawValue.trim() : rawValue;
+      }
+    };
+  }
+
+  function safeParseNumber(rawValue) {
+    const number = rawValue ? parseFloat(rawValue) : null;
+    return isNumeric(number) ? number : rawValue;
+  }
+
+  /**
+   * Copyright (C) 2017 salesforce.com, inc.
+   */
+  const { isArray } = Array;
+  const { getPrototypeOf, create: ObjectCreate, defineProperty: ObjectDefineProperty, defineProperties: ObjectDefineProperties, isExtensible, getOwnPropertyDescriptor, getOwnPropertyNames, getOwnPropertySymbols, preventExtensions, hasOwnProperty, } = Object;
+  const { push: ArrayPush, concat: ArrayConcat, map: ArrayMap, } = Array.prototype;
+  function isUndefined(obj) {
+      return obj === undefined;
+  }
+  function isFunction(obj) {
+      return typeof obj === 'function';
+  }
+  function isObject(obj) {
+      return typeof obj === 'object';
+  }
+  const proxyToValueMap = new WeakMap();
+  function registerProxy(proxy, value) {
+      proxyToValueMap.set(proxy, value);
+  }
+  const unwrap = (replicaOrAny) => proxyToValueMap.get(replicaOrAny) || replicaOrAny;
+
+  function wrapValue(membrane, value) {
+      return membrane.valueIsObservable(value) ? membrane.getProxy(value) : value;
+  }
+  /**
+   * Unwrap property descriptors will set value on original descriptor
+   * We only need to unwrap if value is specified
+   * @param descriptor external descrpitor provided to define new property on original value
+   */
+  function unwrapDescriptor(descriptor) {
+      if (hasOwnProperty.call(descriptor, 'value')) {
+          descriptor.value = unwrap(descriptor.value);
+      }
+      return descriptor;
+  }
+  function lockShadowTarget(membrane, shadowTarget, originalTarget) {
+      const targetKeys = ArrayConcat.call(getOwnPropertyNames(originalTarget), getOwnPropertySymbols(originalTarget));
+      targetKeys.forEach((key) => {
+          let descriptor = getOwnPropertyDescriptor(originalTarget, key);
+          // We do not need to wrap the descriptor if configurable
+          // Because we can deal with wrapping it when user goes through
+          // Get own property descriptor. There is also a chance that this descriptor
+          // could change sometime in the future, so we can defer wrapping
+          // until we need to
+          if (!descriptor.configurable) {
+              descriptor = wrapDescriptor(membrane, descriptor, wrapValue);
+          }
+          ObjectDefineProperty(shadowTarget, key, descriptor);
+      });
+      preventExtensions(shadowTarget);
+  }
+  class ReactiveProxyHandler {
+      constructor(membrane, value) {
+          this.originalTarget = value;
+          this.membrane = membrane;
+      }
+      get(shadowTarget, key) {
+          const { originalTarget, membrane } = this;
+          const value = originalTarget[key];
+          const { valueObserved } = membrane;
+          valueObserved(originalTarget, key);
+          return membrane.getProxy(value);
+      }
+      set(shadowTarget, key, value) {
+          const { originalTarget, membrane: { valueMutated } } = this;
+          const oldValue = originalTarget[key];
+          if (oldValue !== value) {
+              originalTarget[key] = value;
+              valueMutated(originalTarget, key);
+          }
+          else if (key === 'length' && isArray(originalTarget)) {
+              // fix for issue #236: push will add the new index, and by the time length
+              // is updated, the internal length is already equal to the new length value
+              // therefore, the oldValue is equal to the value. This is the forking logic
+              // to support this use case.
+              valueMutated(originalTarget, key);
+          }
+          return true;
+      }
+      deleteProperty(shadowTarget, key) {
+          const { originalTarget, membrane: { valueMutated } } = this;
+          delete originalTarget[key];
+          valueMutated(originalTarget, key);
+          return true;
+      }
+      apply(shadowTarget, thisArg, argArray) {
+          /* No op */
+      }
+      construct(target, argArray, newTarget) {
+          /* No op */
+      }
+      has(shadowTarget, key) {
+          const { originalTarget, membrane: { valueObserved } } = this;
+          valueObserved(originalTarget, key);
+          return key in originalTarget;
+      }
+      ownKeys(shadowTarget) {
+          const { originalTarget } = this;
+          return ArrayConcat.call(getOwnPropertyNames(originalTarget), getOwnPropertySymbols(originalTarget));
+      }
+      isExtensible(shadowTarget) {
+          const shadowIsExtensible = isExtensible(shadowTarget);
+          if (!shadowIsExtensible) {
+              return shadowIsExtensible;
+          }
+          const { originalTarget, membrane } = this;
+          const targetIsExtensible = isExtensible(originalTarget);
+          if (!targetIsExtensible) {
+              lockShadowTarget(membrane, shadowTarget, originalTarget);
+          }
+          return targetIsExtensible;
+      }
+      setPrototypeOf(shadowTarget, prototype) {
+      }
+      getPrototypeOf(shadowTarget) {
+          const { originalTarget } = this;
+          return getPrototypeOf(originalTarget);
+      }
+      getOwnPropertyDescriptor(shadowTarget, key) {
+          const { originalTarget, membrane } = this;
+          const { valueObserved } = this.membrane;
+          // keys looked up via hasOwnProperty need to be reactive
+          valueObserved(originalTarget, key);
+          let desc = getOwnPropertyDescriptor(originalTarget, key);
+          if (isUndefined(desc)) {
+              return desc;
+          }
+          const shadowDescriptor = getOwnPropertyDescriptor(shadowTarget, key);
+          if (!isUndefined(shadowDescriptor)) {
+              return shadowDescriptor;
+          }
+          // Note: by accessing the descriptor, the key is marked as observed
+          // but access to the value, setter or getter (if available) cannot observe
+          // mutations, just like regular methods, in which case we just do nothing.
+          desc = wrapDescriptor(membrane, desc, wrapValue);
+          if (!desc.configurable) {
+              // If descriptor from original target is not configurable,
+              // We must copy the wrapped descriptor over to the shadow target.
+              // Otherwise, proxy will throw an invariant error.
+              // This is our last chance to lock the value.
+              // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/handler/getOwnPropertyDescriptor#Invariants
+              ObjectDefineProperty(shadowTarget, key, desc);
+          }
+          return desc;
+      }
+      preventExtensions(shadowTarget) {
+          const { originalTarget, membrane } = this;
+          lockShadowTarget(membrane, shadowTarget, originalTarget);
+          preventExtensions(originalTarget);
+          return true;
+      }
+      defineProperty(shadowTarget, key, descriptor) {
+          const { originalTarget, membrane } = this;
+          const { valueMutated } = membrane;
+          const { configurable } = descriptor;
+          // We have to check for value in descriptor
+          // because Object.freeze(proxy) calls this method
+          // with only { configurable: false, writeable: false }
+          // Additionally, method will only be called with writeable:false
+          // if the descriptor has a value, as opposed to getter/setter
+          // So we can just check if writable is present and then see if
+          // value is present. This eliminates getter and setter descriptors
+          if (hasOwnProperty.call(descriptor, 'writable') && !hasOwnProperty.call(descriptor, 'value')) {
+              const originalDescriptor = getOwnPropertyDescriptor(originalTarget, key);
+              descriptor.value = originalDescriptor.value;
+          }
+          ObjectDefineProperty(originalTarget, key, unwrapDescriptor(descriptor));
+          if (configurable === false) {
+              ObjectDefineProperty(shadowTarget, key, wrapDescriptor(membrane, descriptor, wrapValue));
+          }
+          valueMutated(originalTarget, key);
+          return true;
+      }
+  }
+
+  function wrapReadOnlyValue(membrane, value) {
+      return membrane.valueIsObservable(value) ? membrane.getReadOnlyProxy(value) : value;
+  }
+  class ReadOnlyHandler {
+      constructor(membrane, value) {
+          this.originalTarget = value;
+          this.membrane = membrane;
+      }
+      get(shadowTarget, key) {
+          const { membrane, originalTarget } = this;
+          const value = originalTarget[key];
+          const { valueObserved } = membrane;
+          valueObserved(originalTarget, key);
+          return membrane.getReadOnlyProxy(value);
+      }
+      set(shadowTarget, key, value) {
+          return false;
+      }
+      deleteProperty(shadowTarget, key) {
+          return false;
+      }
+      apply(shadowTarget, thisArg, argArray) {
+          /* No op */
+      }
+      construct(target, argArray, newTarget) {
+          /* No op */
+      }
+      has(shadowTarget, key) {
+          const { originalTarget, membrane: { valueObserved } } = this;
+          valueObserved(originalTarget, key);
+          return key in originalTarget;
+      }
+      ownKeys(shadowTarget) {
+          const { originalTarget } = this;
+          return ArrayConcat.call(getOwnPropertyNames(originalTarget), getOwnPropertySymbols(originalTarget));
+      }
+      setPrototypeOf(shadowTarget, prototype) {
+      }
+      getOwnPropertyDescriptor(shadowTarget, key) {
+          const { originalTarget, membrane } = this;
+          const { valueObserved } = membrane;
+          // keys looked up via hasOwnProperty need to be reactive
+          valueObserved(originalTarget, key);
+          let desc = getOwnPropertyDescriptor(originalTarget, key);
+          if (isUndefined(desc)) {
+              return desc;
+          }
+          const shadowDescriptor = getOwnPropertyDescriptor(shadowTarget, key);
+          if (!isUndefined(shadowDescriptor)) {
+              return shadowDescriptor;
+          }
+          // Note: by accessing the descriptor, the key is marked as observed
+          // but access to the value or getter (if available) cannot be observed,
+          // just like regular methods, in which case we just do nothing.
+          desc = wrapDescriptor(membrane, desc, wrapReadOnlyValue);
+          if (hasOwnProperty.call(desc, 'set')) {
+              desc.set = undefined; // readOnly membrane does not allow setters
+          }
+          if (!desc.configurable) {
+              // If descriptor from original target is not configurable,
+              // We must copy the wrapped descriptor over to the shadow target.
+              // Otherwise, proxy will throw an invariant error.
+              // This is our last chance to lock the value.
+              // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/handler/getOwnPropertyDescriptor#Invariants
+              ObjectDefineProperty(shadowTarget, key, desc);
+          }
+          return desc;
+      }
+      preventExtensions(shadowTarget) {
+          return false;
+      }
+      defineProperty(shadowTarget, key, descriptor) {
+          return false;
+      }
+  }
+  function createShadowTarget(value) {
+      let shadowTarget = undefined;
+      if (isArray(value)) {
+          shadowTarget = [];
+      }
+      else if (isObject(value)) {
+          shadowTarget = {};
+      }
+      return shadowTarget;
+  }
+  const ObjectDotPrototype = Object.prototype;
+  function defaultValueIsObservable(value) {
+      // intentionally checking for null
+      if (value === null) {
+          return false;
+      }
+      // treat all non-object types, including undefined, as non-observable values
+      if (typeof value !== 'object') {
+          return false;
+      }
+      if (isArray(value)) {
+          return true;
+      }
+      const proto = getPrototypeOf(value);
+      return (proto === ObjectDotPrototype || proto === null || getPrototypeOf(proto) === null);
+  }
+  const defaultValueObserved = (obj, key) => {
+      /* do nothing */
+  };
+  const defaultValueMutated = (obj, key) => {
+      /* do nothing */
+  };
+  const defaultValueDistortion = (value) => value;
+  function wrapDescriptor(membrane, descriptor, getValue) {
+      const { set, get } = descriptor;
+      if (hasOwnProperty.call(descriptor, 'value')) {
+          descriptor.value = getValue(membrane, descriptor.value);
+      }
+      else {
+          if (!isUndefined(get)) {
+              descriptor.get = function () {
+                  // invoking the original getter with the original target
+                  return getValue(membrane, get.call(unwrap(this)));
+              };
+          }
+          if (!isUndefined(set)) {
+              descriptor.set = function (value) {
+                  // At this point we don't have a clear indication of whether
+                  // or not a valid mutation will occur, we don't have the key,
+                  // and we are not sure why and how they are invoking this setter.
+                  // Nevertheless we preserve the original semantics by invoking the
+                  // original setter with the original target and the unwrapped value
+                  set.call(unwrap(this), membrane.unwrapProxy(value));
+              };
+          }
+      }
+      return descriptor;
+  }
+  class ReactiveMembrane {
+      constructor(options) {
+          this.valueDistortion = defaultValueDistortion;
+          this.valueMutated = defaultValueMutated;
+          this.valueObserved = defaultValueObserved;
+          this.valueIsObservable = defaultValueIsObservable;
+          this.objectGraph = new WeakMap();
+          if (!isUndefined(options)) {
+              const { valueDistortion, valueMutated, valueObserved, valueIsObservable } = options;
+              this.valueDistortion = isFunction(valueDistortion) ? valueDistortion : defaultValueDistortion;
+              this.valueMutated = isFunction(valueMutated) ? valueMutated : defaultValueMutated;
+              this.valueObserved = isFunction(valueObserved) ? valueObserved : defaultValueObserved;
+              this.valueIsObservable = isFunction(valueIsObservable) ? valueIsObservable : defaultValueIsObservable;
+          }
+      }
+      getProxy(value) {
+          const unwrappedValue = unwrap(value);
+          const distorted = this.valueDistortion(unwrappedValue);
+          if (this.valueIsObservable(distorted)) {
+              const o = this.getReactiveState(unwrappedValue, distorted);
+              // when trying to extract the writable version of a readonly
+              // we return the readonly.
+              return o.readOnly === value ? value : o.reactive;
+          }
+          return distorted;
+      }
+      getReadOnlyProxy(value) {
+          value = unwrap(value);
+          const distorted = this.valueDistortion(value);
+          if (this.valueIsObservable(distorted)) {
+              return this.getReactiveState(value, distorted).readOnly;
+          }
+          return distorted;
+      }
+      unwrapProxy(p) {
+          return unwrap(p);
+      }
+      getReactiveState(value, distortedValue) {
+          const { objectGraph, } = this;
+          let reactiveState = objectGraph.get(distortedValue);
+          if (reactiveState) {
+              return reactiveState;
+          }
+          const membrane = this;
+          reactiveState = {
+              get reactive() {
+                  const reactiveHandler = new ReactiveProxyHandler(membrane, distortedValue);
+                  // caching the reactive proxy after the first time it is accessed
+                  const proxy = new Proxy(createShadowTarget(distortedValue), reactiveHandler);
+                  registerProxy(proxy, value);
+                  ObjectDefineProperty(this, 'reactive', { value: proxy });
+                  return proxy;
+              },
+              get readOnly() {
+                  const readOnlyHandler = new ReadOnlyHandler(membrane, distortedValue);
+                  // caching the readOnly proxy after the first time it is accessed
+                  const proxy = new Proxy(createShadowTarget(distortedValue), readOnlyHandler);
+                  registerProxy(proxy, value);
+                  ObjectDefineProperty(this, 'readOnly', { value: proxy });
+                  return proxy;
+              }
+          };
+          objectGraph.set(distortedValue, reactiveState);
+          return reactiveState;
+      }
+  }
+  /** version: 0.26.0 */
+
+  function wrap(data, mutationCallback) {
+
+    let membrane = new ReactiveMembrane({
+      valueMutated(target, key) {
+        mutationCallback(target, key);
+      }
+
+    });
+    return {
+      data: membrane.getProxy(data),
+      membrane: membrane
+    };
+  }
+  function unwrap$1(membrane, observable) {
+    let unwrappedData = membrane.unwrapProxy(observable);
+    let copy = {};
+    Object.keys(unwrappedData).forEach(key => {
+      if (['$el', '$refs', '$nextTick', '$watch'].includes(key)) return;
+      copy[key] = unwrappedData[key];
+    });
+    return copy;
+  }
+
+  class Component {
+    constructor(el, componentForClone = null) {
+      this.$el = el;
+      const dataAttr = this.$el.getAttribute('x-data');
+      const dataExpression = dataAttr === '' ? '{}' : dataAttr;
+      const initExpression = this.$el.getAttribute('x-init');
+      let dataExtras = {
+        $el: this.$el
+      };
+      let canonicalComponentElementReference = componentForClone ? componentForClone.$el : this.$el;
+      Object.entries(Alpine.magicProperties).forEach(([name, callback]) => {
+        Object.defineProperty(dataExtras, `$${name}`, {
+          get: function get() {
+            return callback(canonicalComponentElementReference);
+          }
+        });
+      });
+      this.unobservedData = componentForClone ? componentForClone.getUnobservedData() : saferEval(el, dataExpression, dataExtras);
+      // Construct a Proxy-based observable. This will be used to handle reactivity.
+
+      let {
+        membrane,
+        data
+      } = this.wrapDataInObservable(this.unobservedData);
+      this.$data = data;
+      this.membrane = membrane; // After making user-supplied data methods reactive, we can now add
+      // our magic properties to the original data for access.
+
+      this.unobservedData.$el = this.$el;
+      this.unobservedData.$refs = this.getRefsProxy();
+      this.nextTickStack = [];
+
+      this.unobservedData.$nextTick = callback => {
+        this.nextTickStack.push(callback);
+      };
+
+      this.watchers = {};
+
+      this.unobservedData.$watch = (property, callback) => {
+        if (!this.watchers[property]) this.watchers[property] = [];
+        this.watchers[property].push(callback);
+      };
+      /* MODERN-ONLY:START */
+      // We remove this piece of code from the legacy build.
+      // In IE11, we have already defined our helpers at this point.
+      // Register custom magic properties.
+
+
+      Object.entries(Alpine.magicProperties).forEach(([name, callback]) => {
+        Object.defineProperty(this.unobservedData, `$${name}`, {
+          get: function get() {
+            return callback(canonicalComponentElementReference, this.$el);
+          }
+        });
+      });
+      /* MODERN-ONLY:END */
+
+      this.showDirectiveStack = [];
+      this.showDirectiveLastElement;
+      componentForClone || Alpine.onBeforeComponentInitializeds.forEach(callback => callback(this));
+      var initReturnedCallback; // If x-init is present AND we aren't cloning (skip x-init on clone)
+
+      if (initExpression && !componentForClone) {
+        // We want to allow data manipulation, but not trigger DOM updates just yet.
+        // We haven't even initialized the elements with their Alpine bindings. I mean c'mon.
+        this.pauseReactivity = true;
+        initReturnedCallback = this.evaluateReturnExpression(this.$el, initExpression);
+        this.pauseReactivity = false;
+      } // Register all our listeners and set all our attribute bindings.
+      // If we're cloning a component, the third parameter ensures no duplicate
+      // event listeners are registered (the mutation observer will take care of them)
+
+
+      this.initializeElements(this.$el, () => {}, componentForClone); // Use mutation observer to detect new elements being added within this component at run-time.
+      // Alpine's just so darn flexible amirite?
+
+      this.listenForNewElementsToInitialize();
+
+      if (typeof initReturnedCallback === 'function') {
+        // Run the callback returned from the "x-init" hook to allow the user to do stuff after
+        // Alpine's got it's grubby little paws all over everything.
+        initReturnedCallback.call(this.$data);
+      }
+
+      componentForClone || setTimeout(() => {
+        Alpine.onComponentInitializeds.forEach(callback => callback(this));
+      }, 0);
+    }
+
+    getUnobservedData() {
+      return unwrap$1(this.membrane, this.$data);
+    }
+
+    wrapDataInObservable(data) {
+      var self = this;
+      let updateDom = debounce(function () {
+        self.updateElements(self.$el);
+      }, 0);
+      return wrap(data, (target, key) => {
+        if (self.watchers[key]) {
+          // If there's a watcher for this specific key, run it.
+          self.watchers[key].forEach(callback => callback(target[key]));
+        } else if (Array.isArray(target)) {
+          // Arrays are special cases, if any of the items change, we consider the array as mutated.
+          Object.keys(self.watchers).forEach(fullDotNotationKey => {
+            let dotNotationParts = fullDotNotationKey.split('.'); // Ignore length mutations since they would result in duplicate calls.
+            // For example, when calling push, we would get a mutation for the item's key
+            // and a second mutation for the length property.
+
+            if (key === 'length') return;
+            dotNotationParts.reduce((comparisonData, part) => {
+              if (Object.is(target, comparisonData[part])) {
+                self.watchers[fullDotNotationKey].forEach(callback => callback(target));
+              }
+
+              return comparisonData[part];
+            }, self.unobservedData);
+          });
+        } else {
+          // Let's walk through the watchers with "dot-notation" (foo.bar) and see
+          // if this mutation fits any of them.
+          Object.keys(self.watchers).filter(i => i.includes('.')).forEach(fullDotNotationKey => {
+            let dotNotationParts = fullDotNotationKey.split('.'); // If this dot-notation watcher's last "part" doesn't match the current
+            // key, then skip it early for performance reasons.
+
+            if (key !== dotNotationParts[dotNotationParts.length - 1]) return; // Now, walk through the dot-notation "parts" recursively to find
+            // a match, and call the watcher if one's found.
+
+            dotNotationParts.reduce((comparisonData, part) => {
+              if (Object.is(target, comparisonData)) {
+                // Run the watchers.
+                self.watchers[fullDotNotationKey].forEach(callback => callback(target[key]));
+              }
+
+              return comparisonData[part];
+            }, self.unobservedData);
+          });
+        } // Don't react to data changes for cases like the `x-created` hook.
+
+
+        if (self.pauseReactivity) return;
+        updateDom();
+      });
+    }
+
+    walkAndSkipNestedComponents(el, callback, initializeComponentCallback = () => {}) {
+      walk(el, el => {
+        // We've hit a component.
+        if (el.hasAttribute('x-data')) {
+          // If it's not the current one.
+          if (!el.isSameNode(this.$el)) {
+            // Initialize it if it's not.
+            if (!el.__x) initializeComponentCallback(el); // Now we'll let that sub-component deal with itself.
+
+            return false;
+          }
+        }
+
+        return callback(el);
+      });
+    }
+
+    initializeElements(rootEl, extraVars = () => {}, componentForClone = false) {
+      this.walkAndSkipNestedComponents(rootEl, el => {
+        // Don't touch spawns from for loop
+        if (el.__x_for_key !== undefined) return false; // Don't touch spawns from if directives
+
+        if (el.__x_inserted_me !== undefined) return false;
+        this.initializeElement(el, extraVars, componentForClone ? false : true);
+      }, el => {
+        if (!componentForClone) el.__x = new Component(el);
+      });
+      this.executeAndClearRemainingShowDirectiveStack();
+      this.executeAndClearNextTickStack(rootEl);
+    }
+
+    initializeElement(el, extraVars, shouldRegisterListeners = true) {
+      // To support class attribute merging, we have to know what the element's
+      // original class attribute looked like for reference.
+      if (el.hasAttribute('class') && getXAttrs(el, this).length > 0) {
+        el.__x_original_classes = convertClassStringToArray(el.getAttribute('class'));
+      }
+
+      shouldRegisterListeners && this.registerListeners(el, extraVars);
+      this.resolveBoundAttributes(el, true, extraVars);
+    }
+
+    updateElements(rootEl, extraVars = () => {}) {
+      this.walkAndSkipNestedComponents(rootEl, el => {
+        // Don't touch spawns from for loop (and check if the root is actually a for loop in a parent, don't skip it.)
+        if (el.__x_for_key !== undefined && !el.isSameNode(this.$el)) return false;
+        this.updateElement(el, extraVars);
+      }, el => {
+        el.__x = new Component(el);
+      });
+      this.executeAndClearRemainingShowDirectiveStack();
+      this.executeAndClearNextTickStack(rootEl);
+    }
+
+    executeAndClearNextTickStack(el) {
+      // Skip spawns from alpine directives
+      if (el === this.$el && this.nextTickStack.length > 0) {
+        // We run the tick stack after the next frame to allow any
+        // running transitions to pass the initial show stage.
+        requestAnimationFrame(() => {
+          while (this.nextTickStack.length > 0) {
+            this.nextTickStack.shift()();
+          }
+        });
+      }
+    }
+
+    executeAndClearRemainingShowDirectiveStack() {
+      // The goal here is to start all the x-show transitions
+      // and build a nested promise chain so that elements
+      // only hide when the children are finished hiding.
+      this.showDirectiveStack.reverse().map(handler => {
+        return new Promise((resolve, reject) => {
+          handler(resolve, reject);
+        });
+      }).reduce((promiseChain, promise) => {
+        return promiseChain.then(() => {
+          return promise.then(finishElement => {
+            finishElement();
+          });
+        });
+      }, Promise.resolve(() => {})).catch(e => {
+        if (e !== TRANSITION_CANCELLED) throw e;
+      }); // We've processed the handler stack. let's clear it.
+
+      this.showDirectiveStack = [];
+      this.showDirectiveLastElement = undefined;
+    }
+
+    updateElement(el, extraVars) {
+      this.resolveBoundAttributes(el, false, extraVars);
+    }
+
+    registerListeners(el, extraVars) {
+      getXAttrs(el, this).forEach(({
+        type,
+        value,
+        modifiers,
+        expression
+      }) => {
+        switch (type) {
+          case 'on':
+            registerListener(this, el, value, modifiers, expression, extraVars);
+            break;
+
+          case 'model':
+            registerModelListener(this, el, modifiers, expression, extraVars);
+            break;
+        }
+      });
+    }
+
+    resolveBoundAttributes(el, initialUpdate = false, extraVars) {
+      let attrs = getXAttrs(el, this);
+      attrs.forEach(({
+        type,
+        value,
+        modifiers,
+        expression
+      }) => {
+        switch (type) {
+          case 'model':
+            handleAttributeBindingDirective(this, el, 'value', expression, extraVars, type, modifiers);
+            break;
+
+          case 'bind':
+            // The :key binding on an x-for is special, ignore it.
+            if (el.tagName.toLowerCase() === 'template' && value === 'key') return;
+            handleAttributeBindingDirective(this, el, value, expression, extraVars, type, modifiers);
+            break;
+
+          case 'text':
+            var output = this.evaluateReturnExpression(el, expression, extraVars);
+            handleTextDirective(el, output, expression);
+            break;
+
+          case 'html':
+            handleHtmlDirective(this, el, expression, extraVars);
+            break;
+
+          case 'show':
+            var output = this.evaluateReturnExpression(el, expression, extraVars);
+            handleShowDirective(this, el, output, modifiers, initialUpdate);
+            break;
+
+          case 'if':
+            // If this element also has x-for on it, don't process x-if.
+            // We will let the "x-for" directive handle the "if"ing.
+            if (attrs.some(i => i.type === 'for')) return;
+            var output = this.evaluateReturnExpression(el, expression, extraVars);
+            handleIfDirective(this, el, output, initialUpdate, extraVars);
+            break;
+
+          case 'for':
+            handleForDirective(this, el, expression, initialUpdate, extraVars);
+            break;
+
+          case 'cloak':
+            el.removeAttribute('x-cloak');
+            break;
+        }
+      });
+    }
+
+    evaluateReturnExpression(el, expression, extraVars = () => {}) {
+      return saferEval(el, expression, this.$data, _objectSpread2(_objectSpread2({}, extraVars()), {}, {
+        $dispatch: this.getDispatchFunction(el)
+      }));
+    }
+
+    evaluateCommandExpression(el, expression, extraVars = () => {}) {
+      return saferEvalNoReturn(el, expression, this.$data, _objectSpread2(_objectSpread2({}, extraVars()), {}, {
+        $dispatch: this.getDispatchFunction(el)
+      }));
+    }
+
+    getDispatchFunction(el) {
+      return (event, detail = {}) => {
+        el.dispatchEvent(new CustomEvent(event, {
+          detail,
+          bubbles: true
+        }));
+      };
+    }
+
+    listenForNewElementsToInitialize() {
+      const targetNode = this.$el;
+      const observerOptions = {
+        childList: true,
+        attributes: true,
+        subtree: true
+      };
+      const observer = new MutationObserver(mutations => {
+        for (let i = 0; i < mutations.length; i++) {
+          // Filter out mutations triggered from child components.
+          const closestParentComponent = mutations[i].target.closest('[x-data]');
+          if (!(closestParentComponent && closestParentComponent.isSameNode(this.$el))) continue;
+
+          if (mutations[i].type === 'attributes' && mutations[i].attributeName === 'x-data') {
+            const xAttr = mutations[i].target.getAttribute('x-data') || '{}';
+            const rawData = saferEval(this.$el, xAttr, {
+              $el: this.$el
+            });
+            Object.keys(rawData).forEach(key => {
+              if (this.$data[key] !== rawData[key]) {
+                this.$data[key] = rawData[key];
+              }
+            });
+          }
+
+          if (mutations[i].addedNodes.length > 0) {
+            mutations[i].addedNodes.forEach(node => {
+              if (node.nodeType !== 1 || node.__x_inserted_me) return;
+
+              if (node.matches('[x-data]') && !node.__x) {
+                node.__x = new Component(node);
+                return;
+              }
+
+              this.initializeElements(node);
+            });
+          }
+        }
+      });
+      observer.observe(targetNode, observerOptions);
+    }
+
+    getRefsProxy() {
+      var self = this;
+      var refObj = {};
+      // One of the goals of this is to not hold elements in memory, but rather re-evaluate
+      // the DOM when the system needs something from it. This way, the framework is flexible and
+      // friendly to outside DOM changes from libraries like Vue/Livewire.
+      // For this reason, I'm using an "on-demand" proxy to fake a "$refs" object.
+
+      return new Proxy(refObj, {
+        get(object, property) {
+          if (property === '$isAlpineProxy') return true;
+          var ref; // We can't just query the DOM because it's hard to filter out refs in
+          // nested components.
+
+          self.walkAndSkipNestedComponents(self.$el, el => {
+            if (el.hasAttribute('x-ref') && el.getAttribute('x-ref') === property) {
+              ref = el;
+            }
+          });
+          return ref;
+        }
+
+      });
+    }
+
+  }
+
+  const Alpine = {
+    version: "2.8.2",
+    pauseMutationObserver: false,
+    magicProperties: {},
+    onComponentInitializeds: [],
+    onBeforeComponentInitializeds: [],
+    ignoreFocusedForValueBinding: false,
+    start: async function start() {
+      if (!isTesting()) {
+        await domReady();
+      }
+
+      this.discoverComponents(el => {
+        this.initializeComponent(el);
+      }); // It's easier and more performant to just support Turbolinks than listen
+      // to MutationObserver mutations at the document level.
+
+      document.addEventListener("turbolinks:load", () => {
+        this.discoverUninitializedComponents(el => {
+          this.initializeComponent(el);
+        });
+      });
+      this.listenForNewUninitializedComponentsAtRunTime();
+    },
+    discoverComponents: function discoverComponents(callback) {
+      const rootEls = document.querySelectorAll('[x-data]');
+      rootEls.forEach(rootEl => {
+        callback(rootEl);
+      });
+    },
+    discoverUninitializedComponents: function discoverUninitializedComponents(callback, el = null) {
+      const rootEls = (el || document).querySelectorAll('[x-data]');
+      Array.from(rootEls).filter(el => el.__x === undefined).forEach(rootEl => {
+        callback(rootEl);
+      });
+    },
+    listenForNewUninitializedComponentsAtRunTime: function listenForNewUninitializedComponentsAtRunTime() {
+      const targetNode = document.querySelector('body');
+      const observerOptions = {
+        childList: true,
+        attributes: true,
+        subtree: true
+      };
+      const observer = new MutationObserver(mutations => {
+        if (this.pauseMutationObserver) return;
+
+        for (let i = 0; i < mutations.length; i++) {
+          if (mutations[i].addedNodes.length > 0) {
+            mutations[i].addedNodes.forEach(node => {
+              // Discard non-element nodes (like line-breaks)
+              if (node.nodeType !== 1) return; // Discard any changes happening within an existing component.
+              // They will take care of themselves.
+
+              if (node.parentElement && node.parentElement.closest('[x-data]')) return;
+              this.discoverUninitializedComponents(el => {
+                this.initializeComponent(el);
+              }, node.parentElement);
+            });
+          }
+        }
+      });
+      observer.observe(targetNode, observerOptions);
+    },
+    initializeComponent: function initializeComponent(el) {
+      if (!el.__x) {
+        // Wrap in a try/catch so that we don't prevent other components
+        // from initializing when one component contains an error.
+        try {
+          el.__x = new Component(el);
+        } catch (error) {
+          setTimeout(() => {
+            throw error;
+          }, 0);
+        }
+      }
+    },
+    clone: function clone(component, newEl) {
+      if (!newEl.__x) {
+        newEl.__x = new Component(newEl, component);
+      }
+    },
+    addMagicProperty: function addMagicProperty(name, callback) {
+      this.magicProperties[name] = callback;
+    },
+    onComponentInitialized: function onComponentInitialized(callback) {
+      this.onComponentInitializeds.push(callback);
+    },
+    onBeforeComponentInitialized: function onBeforeComponentInitialized(callback) {
+      this.onBeforeComponentInitializeds.push(callback);
+    }
+  };
+
+  if (!isTesting()) {
+    window.Alpine = Alpine;
+
+    if (window.deferLoadingAlpine) {
+      window.deferLoadingAlpine(function () {
+        window.Alpine.start();
+      });
+    } else {
+      window.Alpine.start();
+    }
+  }
+
+  return Alpine;
+
+})));
+
+
+/***/ }),
+
 /***/ "./node_modules/axios/index.js":
 /*!*************************************!*\
   !*** ./node_modules/axios/index.js ***!
@@ -1936,6 +3894,20 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./resources/js/app.js":
+/*!*****************************!*\
+  !*** ./resources/js/app.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+__webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+
+__webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/alpine.js");
+
+__webpack_require__(/*! ./components/App */ "./resources/js/components/App.js");
+
+/***/ }),
+
 /***/ "./resources/js/bootstrap.js":
 /*!***********************************!*\
   !*** ./resources/js/bootstrap.js ***!
@@ -1994,15 +3966,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var _components_signIn__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/signIn */ "./resources/js/components/components/signIn.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
 /* harmony import */ var _components_navBar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/navBar */ "./resources/js/components/components/navBar.js");
 /* harmony import */ var _components_mainContent__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/mainContent */ "./resources/js/components/components/mainContent.js");
 /* harmony import */ var _components_footer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/footer */ "./resources/js/components/components/footer.js");
 /* harmony import */ var _components_forgotPassword__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/forgotPassword */ "./resources/js/components/components/forgotPassword.js");
 /* harmony import */ var _components_tournament__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/tournament */ "./resources/js/components/components/tournament.js");
 /* harmony import */ var _App_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./App.css */ "./resources/js/components/App.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2037,9 +4008,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
-
-
-
 var App = /*#__PURE__*/function (_Component) {
   _inherits(App, _Component);
 
@@ -2054,35 +4022,23 @@ var App = /*#__PURE__*/function (_Component) {
   _createClass(App, [{
     key: "render",
     value: function render() {
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
-        className: "App",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
-          className: "appPosition",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(react_router_dom__WEBPACK_IMPORTED_MODULE_10__.BrowserRouter, {
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(react_router_dom__WEBPACK_IMPORTED_MODULE_11__.Switch, {
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_11__.Route, {
-                exact: true,
-                path: "/signIn",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_signIn__WEBPACK_IMPORTED_MODULE_2__.default, {})
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_11__.Route, {
-                exact: true,
-                path: "/forgotPassword",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_forgotPassword__WEBPACK_IMPORTED_MODULE_6__.default, {})
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.Fragment, {
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_navBar__WEBPACK_IMPORTED_MODULE_3__.default, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_11__.Route, {
-                  exact: true,
-                  path: "/",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_mainContent__WEBPACK_IMPORTED_MODULE_4__.default, {})
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_11__.Route, {
-                  exact: true,
-                  path: "/tournament",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_tournament__WEBPACK_IMPORTED_MODULE_7__.default, {})
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_footer__WEBPACK_IMPORTED_MODULE_5__.default, {})]
-              })]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_11__.Switch, {})]
-          })
-        })
-      });
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "App"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "appPosition"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.BrowserRouter, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_10__.Switch, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_10__.Route, {
+        exact: true,
+        path: "/signIn"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_signIn__WEBPACK_IMPORTED_MODULE_2__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_10__.Route, {
+        exact: true,
+        path: "/forgotPassword"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_forgotPassword__WEBPACK_IMPORTED_MODULE_6__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_navBar__WEBPACK_IMPORTED_MODULE_3__.default, null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_10__.Route, {
+        exact: true,
+        path: "/"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_mainContent__WEBPACK_IMPORTED_MODULE_4__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_10__.Route, {
+        exact: true,
+        path: "/tournament"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_tournament__WEBPACK_IMPORTED_MODULE_7__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_footer__WEBPACK_IMPORTED_MODULE_5__.default, null))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_10__.Switch, null))));
     }
   }]);
 
@@ -2092,7 +4048,7 @@ var App = /*#__PURE__*/function (_Component) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (App);
 
 if (document.getElementById("app")) {
-  react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(App, {}), document.getElementById("app"));
+  react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(App, null), document.getElementById("app"));
 }
 
 /***/ }),
@@ -2110,66 +4066,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _footer_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./footer.css */ "./resources/js/components/components/footer.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-
-
 
 
 
 var footer = function footer() {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("section", {
-    id: "footer",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-      className: "footerContent",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("ul", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-          children: "CONTACT US!"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
-          href: "https://www.instagram.com/ilham_tawakhal/",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-            children: "@Instagram"
-          })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
-          href: "https://twitter.com/Ilham_tawakhal",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-            children: "@Twitter"
-          })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
-          href: "https://www.twitch.tv/itash__",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-            children: "@Twitch"
-          })
-        })]
-      })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-      className: "footerContent",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-        children: "Copyright by me @2021"
-      })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-      className: "footerContent",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("ul", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-          children: "CONTACT US!"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
-          href: "https://www.instagram.com/ilham_tawakhal/",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-            children: "@Instagram"
-          })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
-          href: "https://twitter.com/Ilham_tawakhal",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-            children: "@Twitter"
-          })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
-          href: "https://www.twitch.tv/itash__",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("li", {
-            children: "@Twitch"
-          })
-        })]
-      })
-    })]
-  });
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("section", {
+    id: "footer"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "footerContent"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "CONTACT US!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "https://www.instagram.com/ilham_tawakhal/"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "@Instagram")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "https://twitter.com/Ilham_tawakhal"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "@Twitter")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "https://www.twitch.tv/itash__"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "@Twitch")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "footerContent"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Copyright by me @2021")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "footerContent"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "CONTACT US!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "https://www.instagram.com/ilham_tawakhal/"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "@Instagram")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "https://twitter.com/Ilham_tawakhal"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "@Twitter")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "https://www.twitch.tv/itash__"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "@Twitch")))));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (footer);
@@ -2188,10 +4109,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-
-
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 
 
 
@@ -2224,17 +4142,14 @@ var forgotPassword = function forgotPassword() {
     fontSize: "18px",
     fontWeight: "bold"
   };
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-    style: forgotPassword,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h3", {
-      style: forgotPasswordText,
-      children: "password is a credential variable for us. try to remember what password were you using. this is why you should not use random things as your important variable of your account's password"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)(react_router_dom__WEBPACK_IMPORTED_MODULE_2__.Link, {
-      style: goBack,
-      to: "/signIn",
-      children: [" ", "Go Back"]
-    })]
-  });
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    style: forgotPassword
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", {
+    style: forgotPasswordText
+  }, "password is a credential variable for us. try to remember what password were you using. this is why you should not use random things as your important variable of your account's password"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+    style: goBack,
+    to: "/signIn"
+  }, " ", "Go Back"));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (forgotPassword);
@@ -2257,9 +4172,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _subMainContent_works__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./subMainContent/works */ "./resources/js/components/components/subMainContent/works.js");
 /* harmony import */ var _subMainContent_ourPartners__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./subMainContent/ourPartners */ "./resources/js/components/components/subMainContent/ourPartners.js");
 /* harmony import */ var _mainContent_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./mainContent.css */ "./resources/js/components/components/mainContent.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-
-
 
 
 
@@ -2267,10 +4179,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var mainContent = function mainContent() {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("section", {
-    id: "mainContent",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_subMainContent_welcomePage__WEBPACK_IMPORTED_MODULE_1__.default, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_subMainContent_works__WEBPACK_IMPORTED_MODULE_2__.default, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_subMainContent_ourPartners__WEBPACK_IMPORTED_MODULE_3__.default, {})]
-  });
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("section", {
+    id: "mainContent"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_subMainContent_welcomePage__WEBPACK_IMPORTED_MODULE_1__.default, null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_subMainContent_works__WEBPACK_IMPORTED_MODULE_2__.default, null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_subMainContent_ourPartners__WEBPACK_IMPORTED_MODULE_3__.default, null));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (mainContent);
@@ -2290,56 +4201,41 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _navBar_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./navBar.css */ "./resources/js/components/components/navBar.css");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-
-
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 
 
 
 
 var navBar = function navBar() {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("section", {
-    id: "navBar",
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-      className: "navPosition",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
-        href: "/",
-        className: "navText",
-        children: "Home"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
-        href: "/guide",
-        className: "navText",
-        children: "Guide"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_3__.Link, {
-        to: "/tournament",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-          className: "navText",
-          children: "Tournament"
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_3__.Link, {
-        to: "/signIn",
-        className: "btnPosition",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
-          className: "signIn",
-          children: "SIGN IN"
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-        className: "navText",
-        children: "or"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
-        href: "#",
-        className: "btnPosition",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
-          className: "signUp",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-            className: "btnText",
-            children: "Sign Up"
-          })
-        })
-      })]
-    })
-  });
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("section", {
+    id: "navBar"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "navPosition"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "/",
+    className: "navText"
+  }, "Home"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "/guide",
+    className: "navText"
+  }, "Guide"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__.Link, {
+    to: "/tournament"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
+    className: "navText"
+  }, "Tournament")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__.Link, {
+    to: "/signIn",
+    className: "btnPosition"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    className: "signIn"
+  }, "SIGN IN")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
+    className: "navText"
+  }, "or"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "#",
+    className: "btnPosition"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    className: "signUp"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
+    className: "btnText"
+  }, "Sign Up")))));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (navBar);
@@ -2365,8 +4261,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _img_twitter_png__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../img/twitter.png */ "./resources/js/components/img/twitter.png");
 /* harmony import */ var _img_steam_png__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../img/steam.png */ "./resources/js/components/img/steam.png");
 /* harmony import */ var _signIn_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./signIn.css */ "./resources/js/components/components/signIn.css");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2388,8 +4283,6 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-
 
 
 
@@ -2431,85 +4324,65 @@ var signIn = /*#__PURE__*/function (_Component) {
         window.location.href = "https://store.steampowered.com/";
       };
 
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
-        id: "signIn",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
-          className: "backgroundSignIn",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("img", {
-            className: "logo",
-            src: _img_LLL_logo_png__WEBPACK_IMPORTED_MODULE_1__.default
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("h1", {
-            children: "SIGN IN"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("h3", {
-            children: "to Continue to LLL"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("form", {
-            className: "formSignIn",
-            onSubmit: true,
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
-              className: "formSection space",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("label", {
-                className: "formText",
-                children: "EMAIL"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("input", {
-                className: "formInput",
-                type: "text",
-                name: "name"
-              })]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
-              className: "formSection space",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("label", {
-                className: "formText",
-                children: "PASSWORD"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("input", {
-                className: "formInput",
-                type: "password",
-                name: "password"
-              })]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("button", {
-              className: "formButton",
-              type: "submit",
-              name: "signIn",
-              children: "SIGN IN"
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Link, {
-              to: "/forgotPassword",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("a", {
-                children: "forgot password?"
-              })
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("img", {
-              src: _img_Line_png__WEBPACK_IMPORTED_MODULE_2__.default,
-              className: "formSeparation"
-            })]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Link, {
-            to: "/signUp",
-            className: "signUpSize",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("button", {
-              className: "signUpButton",
-              children: "CREATE FREE ACCOUNT"
-            })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("p", {
-            children: "or sign in using"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
-            className: "mediaSignIn",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("img", {
-              src: _img_twitch_png__WEBPACK_IMPORTED_MODULE_3__.default,
-              onClick: twitchClick,
-              className: "mediaImg"
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("img", {
-              src: _img_google_png__WEBPACK_IMPORTED_MODULE_4__.default,
-              onClick: gooogleClick,
-              className: "mediaImg"
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("img", {
-              src: _img_twitter_png__WEBPACK_IMPORTED_MODULE_5__.default,
-              onClick: twitterClick,
-              className: "mediaImg"
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("img", {
-              src: _img_steam_png__WEBPACK_IMPORTED_MODULE_6__.default,
-              onClick: steamClick,
-              className: "mediaImg"
-            })]
-          })]
-        })
-      });
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        id: "signIn"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "backgroundSignIn"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+        className: "logo",
+        src: _img_LLL_logo_png__WEBPACK_IMPORTED_MODULE_1__.default
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "SIGN IN"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, "to Continue to LLL"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("form", {
+        className: "formSignIn",
+        onSubmit: true
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "formSection space"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
+        className: "formText"
+      }, "EMAIL"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
+        className: "formInput",
+        type: "text",
+        name: "name"
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "formSection space"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
+        className: "formText"
+      }, "PASSWORD"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
+        className: "formInput",
+        type: "password",
+        name: "password"
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+        className: "formButton",
+        type: "submit",
+        name: "signIn"
+      }, "SIGN IN"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Link, {
+        to: "/forgotPassword"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", null, "forgot password?")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+        src: _img_Line_png__WEBPACK_IMPORTED_MODULE_2__.default,
+        className: "formSeparation"
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Link, {
+        to: "/signUp",
+        className: "signUpSize"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+        className: "signUpButton"
+      }, "CREATE FREE ACCOUNT")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "or sign in using"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "mediaSignIn"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+        src: _img_twitch_png__WEBPACK_IMPORTED_MODULE_3__.default,
+        onClick: twitchClick,
+        className: "mediaImg"
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+        src: _img_google_png__WEBPACK_IMPORTED_MODULE_4__.default,
+        onClick: gooogleClick,
+        className: "mediaImg"
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+        src: _img_twitter_png__WEBPACK_IMPORTED_MODULE_5__.default,
+        onClick: twitterClick,
+        className: "mediaImg"
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+        src: _img_steam_png__WEBPACK_IMPORTED_MODULE_6__.default,
+        onClick: steamClick,
+        className: "mediaImg"
+      }))));
     }
   }]);
 
@@ -2533,55 +4406,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _ourPartners_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ourPartners.css */ "./resources/js/components/components/subMainContent/ourPartners.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-
-
 
 
 
 var ourPartners = function ourPartners() {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-    className: "ourPartners",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-      className: "title",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h1", {
-        children: "OUR PARTNERS"
-      })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-      className: "ourPartnersCard",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-        className: "card",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-          children: "Apex"
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-        className: "card",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-          children: "Valorant"
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-        className: "card",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-          children: "Dota 2"
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-        className: "card",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-          children: "PUBG"
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-        className: "card",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-          children: "Rainbow Six Siege"
-        })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-        className: "card",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-          children: "League of Legends"
-        })
-      })]
-    })]
-  });
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "ourPartners"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "title"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "OUR PARTNERS")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "ourPartnersCard"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Apex")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Valorant")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Dota 2")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "PUBG")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Rainbow Six Siege")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "League of Legends"))));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ourPartners);
@@ -2601,33 +4448,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _welcomePage_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./welcomePage.css */ "./resources/js/components/components/subMainContent/welcomePage.css");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-
-
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 
 
 
 
 var welcomePage = function welcomePage() {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-    className: "welcomePage",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h1", {
-      children: "JOIN THE COMPETITIVE ESPORT GAMING"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h4", {
-      children: "CONTEST YOUR SKILL AMONG THE PROS"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_3__.Link, {
-      to: "/signIn",
-      className: "btnPosition",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
-        className: "joinNow",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-          className: "btnText",
-          children: "Join Now"
-        })
-      })
-    })]
-  });
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "welcomePage"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "JOIN THE COMPETITIVE ESPORT GAMING"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h4", null, "CONTEST YOUR SKILL AMONG THE PROS"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__.Link, {
+    to: "/signIn",
+    className: "btnPosition"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    className: "joinNow"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
+    className: "btnText"
+  }, "Join Now"))));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (welcomePage);
@@ -2650,9 +4486,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _img_SignUp_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../img/SignUp.svg */ "./resources/js/components/img/SignUp.svg");
 /* harmony import */ var _img_Contest_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../img/Contest.svg */ "./resources/js/components/img/Contest.svg");
 /* harmony import */ var _img_Prizes_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../img/Prizes.svg */ "./resources/js/components/img/Prizes.svg");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-
-
 
 
 
@@ -2660,54 +4493,32 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var works = function works() {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-    className: "works",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
-      className: "title",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h1", {
-        children: "HOW LLL WORKS"
-      })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-      className: "worksCard",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-        className: "card",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("img", {
-          className: "cardImage",
-          src: _img_SignUp_svg__WEBPACK_IMPORTED_MODULE_2__.default
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h2", {
-          children: "SIGN UP"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("p", {
-          children: "Create an account, choose your game, invite friends to join your team, and join the game tournaments"
-        })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-        className: "card",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("img", {
-          className: "cardImage",
-          src: _img_Contest_svg__WEBPACK_IMPORTED_MODULE_3__.default
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h2", {
-          children: "CONTEST"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("p", {
-          children: "Join the game with the terms and condition of the tournament host and compete against pros to become the champion of the game"
-        })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-        className: "card",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("img", {
-          className: "cardImage",
-          src: _img_Prizes_svg__WEBPACK_IMPORTED_MODULE_4__.default
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h2", {
-          children: "PRIZES"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("p", {
-          children: "Get your prizes by winning the game against pros from the tournament"
-        })]
-      })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
-      className: "learnMore",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("a", {
-        href: "#",
-        children: "Learn More About LLL ..."
-      })
-    })]
-  });
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "works"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "title"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "HOW LLL WORKS")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "worksCard"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+    className: "cardImage",
+    src: _img_SignUp_svg__WEBPACK_IMPORTED_MODULE_2__.default
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "SIGN UP"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Create an account, choose your game, invite friends to join your team, and join the game tournaments")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+    className: "cardImage",
+    src: _img_Contest_svg__WEBPACK_IMPORTED_MODULE_3__.default
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "CONTEST"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Join the game with the terms and condition of the tournament host and compete against pros to become the champion of the game")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+    className: "cardImage",
+    src: _img_Prizes_svg__WEBPACK_IMPORTED_MODULE_4__.default
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "PRIZES"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Get your prizes by winning the game against pros from the tournament"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "learnMore"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "#"
+  }, "Learn More About LLL ...")));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (works);
@@ -2726,13 +4537,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 /* harmony import */ var _img_apex_logo_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../img/apex-logo.png */ "./resources/js/components/img/apex-logo.png");
 /* harmony import */ var _img_valorant_logo_png__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../img/valorant-logo.png */ "./resources/js/components/img/valorant-logo.png");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _tournament_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tournament.css */ "./resources/js/components/components/tournament.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2754,8 +4564,6 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-
 
 
 
@@ -2798,62 +4606,37 @@ var tournament = /*#__PURE__*/function (_Component) {
     key: "render",
     value: function render() {
       var Tournaments = this.state.Tournaments;
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-        id: "tournament",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
-          className: "tournamentLeftContent",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-            className: "subLeftContent",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-              className: "gameMenu",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("img", {
-                className: "imgGameMenu",
-                src: _img_apex_logo_png__WEBPACK_IMPORTED_MODULE_1__.default
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("img", {
-                className: "imgGameMenu",
-                src: _img_valorant_logo_png__WEBPACK_IMPORTED_MODULE_2__.default
-              })]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-              className: "mainContent",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-                className: "contentMenu",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("a", {
-                  children: "ACTIVE TOURNAMENT"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("a", {
-                  children: "|"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("a", {
-                  children: "FINISHED TOURNAMENT"
-                })]
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
-                className: "tournamentTable",
-                children: Tournaments.map(function (Tournaments) {
-                  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Link, {
-                    className: "tournamentTableContent",
-                    to: "/".concat(Tournaments.id),
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h3", {
-                      children: Tournaments.name.toUpperCase()
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h3", {
-                      children: Tournaments.date
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h3", {
-                      children: Tournaments.prize
-                    })]
-                  }, Tournaments.id);
-                })
-              })]
-            })]
-          })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-          className: "tournamentRightContent",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h1", {
-            children: "ARE YOU BRAVE ENOUGH TO SHOW THE WORLD WHO IS THE CHAMPION? SIGN UP NOW!"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Link, {
-            to: "/signUp",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
-              children: "Join Now"
-            })
-          })]
-        })]
-      });
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        id: "tournament"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "tournamentLeftContent"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "subLeftContent"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "gameMenu"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+        className: "imgGameMenu",
+        src: _img_apex_logo_png__WEBPACK_IMPORTED_MODULE_1__.default
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+        className: "imgGameMenu",
+        src: _img_valorant_logo_png__WEBPACK_IMPORTED_MODULE_2__.default
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "mainContent"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "contentMenu"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", null, "ACTIVE TOURNAMENT"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", null, "|"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", null, "FINISHED TOURNAMENT")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "tournamentTable"
+      }, Tournaments.map(function (Tournaments) {
+        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
+          className: "tournamentTableContent",
+          to: "/".concat(Tournaments.id),
+          key: Tournaments.id
+        }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, Tournaments.name.toUpperCase()), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, Tournaments.date), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, Tournaments.prize));
+      }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "tournamentRightContent"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "ARE YOU BRAVE ENOUGH TO SHOW THE WORLD WHO IS THE CHAMPION? SIGN UP NOW!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
+        to: "/signUp"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", null, "Join Now"))));
     }
   }]);
 
@@ -37225,6 +39008,19 @@ var index = react__WEBPACK_IMPORTED_MODULE_0__.createContext || createReactConte
 
 /***/ }),
 
+/***/ "./resources/css/app.css":
+/*!*******************************!*\
+  !*** ./resources/css/app.css ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./node_modules/object-assign/index.js":
 /*!*********************************************!*\
   !*** ./node_modules/object-assign/index.js ***!
@@ -69057,1238 +70853,6 @@ function pathToRegexp (path, keys, options) {
 
 /***/ }),
 
-/***/ "./node_modules/react/cjs/react-jsx-runtime.development.js":
-/*!*****************************************************************!*\
-  !*** ./node_modules/react/cjs/react-jsx-runtime.development.js ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/** @license React v17.0.2
- * react-jsx-runtime.development.js
- *
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-
-
-if (true) {
-  (function() {
-'use strict';
-
-var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-var _assign = __webpack_require__(/*! object-assign */ "./node_modules/object-assign/index.js");
-
-// ATTENTION
-// When adding new symbols to this file,
-// Please consider also adding to 'react-devtools-shared/src/backend/ReactSymbols'
-// The Symbol used to tag the ReactElement-like types. If there is no native Symbol
-// nor polyfill, then a plain number is used for performance.
-var REACT_ELEMENT_TYPE = 0xeac7;
-var REACT_PORTAL_TYPE = 0xeaca;
-exports.Fragment = 0xeacb;
-var REACT_STRICT_MODE_TYPE = 0xeacc;
-var REACT_PROFILER_TYPE = 0xead2;
-var REACT_PROVIDER_TYPE = 0xeacd;
-var REACT_CONTEXT_TYPE = 0xeace;
-var REACT_FORWARD_REF_TYPE = 0xead0;
-var REACT_SUSPENSE_TYPE = 0xead1;
-var REACT_SUSPENSE_LIST_TYPE = 0xead8;
-var REACT_MEMO_TYPE = 0xead3;
-var REACT_LAZY_TYPE = 0xead4;
-var REACT_BLOCK_TYPE = 0xead9;
-var REACT_SERVER_BLOCK_TYPE = 0xeada;
-var REACT_FUNDAMENTAL_TYPE = 0xead5;
-var REACT_SCOPE_TYPE = 0xead7;
-var REACT_OPAQUE_ID_TYPE = 0xeae0;
-var REACT_DEBUG_TRACING_MODE_TYPE = 0xeae1;
-var REACT_OFFSCREEN_TYPE = 0xeae2;
-var REACT_LEGACY_HIDDEN_TYPE = 0xeae3;
-
-if (typeof Symbol === 'function' && Symbol.for) {
-  var symbolFor = Symbol.for;
-  REACT_ELEMENT_TYPE = symbolFor('react.element');
-  REACT_PORTAL_TYPE = symbolFor('react.portal');
-  exports.Fragment = symbolFor('react.fragment');
-  REACT_STRICT_MODE_TYPE = symbolFor('react.strict_mode');
-  REACT_PROFILER_TYPE = symbolFor('react.profiler');
-  REACT_PROVIDER_TYPE = symbolFor('react.provider');
-  REACT_CONTEXT_TYPE = symbolFor('react.context');
-  REACT_FORWARD_REF_TYPE = symbolFor('react.forward_ref');
-  REACT_SUSPENSE_TYPE = symbolFor('react.suspense');
-  REACT_SUSPENSE_LIST_TYPE = symbolFor('react.suspense_list');
-  REACT_MEMO_TYPE = symbolFor('react.memo');
-  REACT_LAZY_TYPE = symbolFor('react.lazy');
-  REACT_BLOCK_TYPE = symbolFor('react.block');
-  REACT_SERVER_BLOCK_TYPE = symbolFor('react.server.block');
-  REACT_FUNDAMENTAL_TYPE = symbolFor('react.fundamental');
-  REACT_SCOPE_TYPE = symbolFor('react.scope');
-  REACT_OPAQUE_ID_TYPE = symbolFor('react.opaque.id');
-  REACT_DEBUG_TRACING_MODE_TYPE = symbolFor('react.debug_trace_mode');
-  REACT_OFFSCREEN_TYPE = symbolFor('react.offscreen');
-  REACT_LEGACY_HIDDEN_TYPE = symbolFor('react.legacy_hidden');
-}
-
-var MAYBE_ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
-var FAUX_ITERATOR_SYMBOL = '@@iterator';
-function getIteratorFn(maybeIterable) {
-  if (maybeIterable === null || typeof maybeIterable !== 'object') {
-    return null;
-  }
-
-  var maybeIterator = MAYBE_ITERATOR_SYMBOL && maybeIterable[MAYBE_ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL];
-
-  if (typeof maybeIterator === 'function') {
-    return maybeIterator;
-  }
-
-  return null;
-}
-
-var ReactSharedInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
-
-function error(format) {
-  {
-    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      args[_key2 - 1] = arguments[_key2];
-    }
-
-    printWarning('error', format, args);
-  }
-}
-
-function printWarning(level, format, args) {
-  // When changing this logic, you might want to also
-  // update consoleWithStackDev.www.js as well.
-  {
-    var ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
-    var stack = ReactDebugCurrentFrame.getStackAddendum();
-
-    if (stack !== '') {
-      format += '%s';
-      args = args.concat([stack]);
-    }
-
-    var argsWithFormat = args.map(function (item) {
-      return '' + item;
-    }); // Careful: RN currently depends on this prefix
-
-    argsWithFormat.unshift('Warning: ' + format); // We intentionally don't use spread (or .apply) directly because it
-    // breaks IE9: https://github.com/facebook/react/issues/13610
-    // eslint-disable-next-line react-internal/no-production-logging
-
-    Function.prototype.apply.call(console[level], console, argsWithFormat);
-  }
-}
-
-// Filter certain DOM attributes (e.g. src, href) if their values are empty strings.
-
-var enableScopeAPI = false; // Experimental Create Event Handle API.
-
-function isValidElementType(type) {
-  if (typeof type === 'string' || typeof type === 'function') {
-    return true;
-  } // Note: typeof might be other than 'symbol' or 'number' (e.g. if it's a polyfill).
-
-
-  if (type === exports.Fragment || type === REACT_PROFILER_TYPE || type === REACT_DEBUG_TRACING_MODE_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || type === REACT_LEGACY_HIDDEN_TYPE || enableScopeAPI ) {
-    return true;
-  }
-
-  if (typeof type === 'object' && type !== null) {
-    if (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_BLOCK_TYPE || type[0] === REACT_SERVER_BLOCK_TYPE) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function getWrappedName(outerType, innerType, wrapperName) {
-  var functionName = innerType.displayName || innerType.name || '';
-  return outerType.displayName || (functionName !== '' ? wrapperName + "(" + functionName + ")" : wrapperName);
-}
-
-function getContextName(type) {
-  return type.displayName || 'Context';
-}
-
-function getComponentName(type) {
-  if (type == null) {
-    // Host root, text node or just invalid type.
-    return null;
-  }
-
-  {
-    if (typeof type.tag === 'number') {
-      error('Received an unexpected object in getComponentName(). ' + 'This is likely a bug in React. Please file an issue.');
-    }
-  }
-
-  if (typeof type === 'function') {
-    return type.displayName || type.name || null;
-  }
-
-  if (typeof type === 'string') {
-    return type;
-  }
-
-  switch (type) {
-    case exports.Fragment:
-      return 'Fragment';
-
-    case REACT_PORTAL_TYPE:
-      return 'Portal';
-
-    case REACT_PROFILER_TYPE:
-      return 'Profiler';
-
-    case REACT_STRICT_MODE_TYPE:
-      return 'StrictMode';
-
-    case REACT_SUSPENSE_TYPE:
-      return 'Suspense';
-
-    case REACT_SUSPENSE_LIST_TYPE:
-      return 'SuspenseList';
-  }
-
-  if (typeof type === 'object') {
-    switch (type.$$typeof) {
-      case REACT_CONTEXT_TYPE:
-        var context = type;
-        return getContextName(context) + '.Consumer';
-
-      case REACT_PROVIDER_TYPE:
-        var provider = type;
-        return getContextName(provider._context) + '.Provider';
-
-      case REACT_FORWARD_REF_TYPE:
-        return getWrappedName(type, type.render, 'ForwardRef');
-
-      case REACT_MEMO_TYPE:
-        return getComponentName(type.type);
-
-      case REACT_BLOCK_TYPE:
-        return getComponentName(type._render);
-
-      case REACT_LAZY_TYPE:
-        {
-          var lazyComponent = type;
-          var payload = lazyComponent._payload;
-          var init = lazyComponent._init;
-
-          try {
-            return getComponentName(init(payload));
-          } catch (x) {
-            return null;
-          }
-        }
-    }
-  }
-
-  return null;
-}
-
-// Helpers to patch console.logs to avoid logging during side-effect free
-// replaying on render function. This currently only patches the object
-// lazily which won't cover if the log function was extracted eagerly.
-// We could also eagerly patch the method.
-var disabledDepth = 0;
-var prevLog;
-var prevInfo;
-var prevWarn;
-var prevError;
-var prevGroup;
-var prevGroupCollapsed;
-var prevGroupEnd;
-
-function disabledLog() {}
-
-disabledLog.__reactDisabledLog = true;
-function disableLogs() {
-  {
-    if (disabledDepth === 0) {
-      /* eslint-disable react-internal/no-production-logging */
-      prevLog = console.log;
-      prevInfo = console.info;
-      prevWarn = console.warn;
-      prevError = console.error;
-      prevGroup = console.group;
-      prevGroupCollapsed = console.groupCollapsed;
-      prevGroupEnd = console.groupEnd; // https://github.com/facebook/react/issues/19099
-
-      var props = {
-        configurable: true,
-        enumerable: true,
-        value: disabledLog,
-        writable: true
-      }; // $FlowFixMe Flow thinks console is immutable.
-
-      Object.defineProperties(console, {
-        info: props,
-        log: props,
-        warn: props,
-        error: props,
-        group: props,
-        groupCollapsed: props,
-        groupEnd: props
-      });
-      /* eslint-enable react-internal/no-production-logging */
-    }
-
-    disabledDepth++;
-  }
-}
-function reenableLogs() {
-  {
-    disabledDepth--;
-
-    if (disabledDepth === 0) {
-      /* eslint-disable react-internal/no-production-logging */
-      var props = {
-        configurable: true,
-        enumerable: true,
-        writable: true
-      }; // $FlowFixMe Flow thinks console is immutable.
-
-      Object.defineProperties(console, {
-        log: _assign({}, props, {
-          value: prevLog
-        }),
-        info: _assign({}, props, {
-          value: prevInfo
-        }),
-        warn: _assign({}, props, {
-          value: prevWarn
-        }),
-        error: _assign({}, props, {
-          value: prevError
-        }),
-        group: _assign({}, props, {
-          value: prevGroup
-        }),
-        groupCollapsed: _assign({}, props, {
-          value: prevGroupCollapsed
-        }),
-        groupEnd: _assign({}, props, {
-          value: prevGroupEnd
-        })
-      });
-      /* eslint-enable react-internal/no-production-logging */
-    }
-
-    if (disabledDepth < 0) {
-      error('disabledDepth fell below zero. ' + 'This is a bug in React. Please file an issue.');
-    }
-  }
-}
-
-var ReactCurrentDispatcher = ReactSharedInternals.ReactCurrentDispatcher;
-var prefix;
-function describeBuiltInComponentFrame(name, source, ownerFn) {
-  {
-    if (prefix === undefined) {
-      // Extract the VM specific prefix used by each line.
-      try {
-        throw Error();
-      } catch (x) {
-        var match = x.stack.trim().match(/\n( *(at )?)/);
-        prefix = match && match[1] || '';
-      }
-    } // We use the prefix to ensure our stacks line up with native stack frames.
-
-
-    return '\n' + prefix + name;
-  }
-}
-var reentry = false;
-var componentFrameCache;
-
-{
-  var PossiblyWeakMap = typeof WeakMap === 'function' ? WeakMap : Map;
-  componentFrameCache = new PossiblyWeakMap();
-}
-
-function describeNativeComponentFrame(fn, construct) {
-  // If something asked for a stack inside a fake render, it should get ignored.
-  if (!fn || reentry) {
-    return '';
-  }
-
-  {
-    var frame = componentFrameCache.get(fn);
-
-    if (frame !== undefined) {
-      return frame;
-    }
-  }
-
-  var control;
-  reentry = true;
-  var previousPrepareStackTrace = Error.prepareStackTrace; // $FlowFixMe It does accept undefined.
-
-  Error.prepareStackTrace = undefined;
-  var previousDispatcher;
-
-  {
-    previousDispatcher = ReactCurrentDispatcher.current; // Set the dispatcher in DEV because this might be call in the render function
-    // for warnings.
-
-    ReactCurrentDispatcher.current = null;
-    disableLogs();
-  }
-
-  try {
-    // This should throw.
-    if (construct) {
-      // Something should be setting the props in the constructor.
-      var Fake = function () {
-        throw Error();
-      }; // $FlowFixMe
-
-
-      Object.defineProperty(Fake.prototype, 'props', {
-        set: function () {
-          // We use a throwing setter instead of frozen or non-writable props
-          // because that won't throw in a non-strict mode function.
-          throw Error();
-        }
-      });
-
-      if (typeof Reflect === 'object' && Reflect.construct) {
-        // We construct a different control for this case to include any extra
-        // frames added by the construct call.
-        try {
-          Reflect.construct(Fake, []);
-        } catch (x) {
-          control = x;
-        }
-
-        Reflect.construct(fn, [], Fake);
-      } else {
-        try {
-          Fake.call();
-        } catch (x) {
-          control = x;
-        }
-
-        fn.call(Fake.prototype);
-      }
-    } else {
-      try {
-        throw Error();
-      } catch (x) {
-        control = x;
-      }
-
-      fn();
-    }
-  } catch (sample) {
-    // This is inlined manually because closure doesn't do it for us.
-    if (sample && control && typeof sample.stack === 'string') {
-      // This extracts the first frame from the sample that isn't also in the control.
-      // Skipping one frame that we assume is the frame that calls the two.
-      var sampleLines = sample.stack.split('\n');
-      var controlLines = control.stack.split('\n');
-      var s = sampleLines.length - 1;
-      var c = controlLines.length - 1;
-
-      while (s >= 1 && c >= 0 && sampleLines[s] !== controlLines[c]) {
-        // We expect at least one stack frame to be shared.
-        // Typically this will be the root most one. However, stack frames may be
-        // cut off due to maximum stack limits. In this case, one maybe cut off
-        // earlier than the other. We assume that the sample is longer or the same
-        // and there for cut off earlier. So we should find the root most frame in
-        // the sample somewhere in the control.
-        c--;
-      }
-
-      for (; s >= 1 && c >= 0; s--, c--) {
-        // Next we find the first one that isn't the same which should be the
-        // frame that called our sample function and the control.
-        if (sampleLines[s] !== controlLines[c]) {
-          // In V8, the first line is describing the message but other VMs don't.
-          // If we're about to return the first line, and the control is also on the same
-          // line, that's a pretty good indicator that our sample threw at same line as
-          // the control. I.e. before we entered the sample frame. So we ignore this result.
-          // This can happen if you passed a class to function component, or non-function.
-          if (s !== 1 || c !== 1) {
-            do {
-              s--;
-              c--; // We may still have similar intermediate frames from the construct call.
-              // The next one that isn't the same should be our match though.
-
-              if (c < 0 || sampleLines[s] !== controlLines[c]) {
-                // V8 adds a "new" prefix for native classes. Let's remove it to make it prettier.
-                var _frame = '\n' + sampleLines[s].replace(' at new ', ' at ');
-
-                {
-                  if (typeof fn === 'function') {
-                    componentFrameCache.set(fn, _frame);
-                  }
-                } // Return the line we found.
-
-
-                return _frame;
-              }
-            } while (s >= 1 && c >= 0);
-          }
-
-          break;
-        }
-      }
-    }
-  } finally {
-    reentry = false;
-
-    {
-      ReactCurrentDispatcher.current = previousDispatcher;
-      reenableLogs();
-    }
-
-    Error.prepareStackTrace = previousPrepareStackTrace;
-  } // Fallback to just using the name if we couldn't make it throw.
-
-
-  var name = fn ? fn.displayName || fn.name : '';
-  var syntheticFrame = name ? describeBuiltInComponentFrame(name) : '';
-
-  {
-    if (typeof fn === 'function') {
-      componentFrameCache.set(fn, syntheticFrame);
-    }
-  }
-
-  return syntheticFrame;
-}
-function describeFunctionComponentFrame(fn, source, ownerFn) {
-  {
-    return describeNativeComponentFrame(fn, false);
-  }
-}
-
-function shouldConstruct(Component) {
-  var prototype = Component.prototype;
-  return !!(prototype && prototype.isReactComponent);
-}
-
-function describeUnknownElementTypeFrameInDEV(type, source, ownerFn) {
-
-  if (type == null) {
-    return '';
-  }
-
-  if (typeof type === 'function') {
-    {
-      return describeNativeComponentFrame(type, shouldConstruct(type));
-    }
-  }
-
-  if (typeof type === 'string') {
-    return describeBuiltInComponentFrame(type);
-  }
-
-  switch (type) {
-    case REACT_SUSPENSE_TYPE:
-      return describeBuiltInComponentFrame('Suspense');
-
-    case REACT_SUSPENSE_LIST_TYPE:
-      return describeBuiltInComponentFrame('SuspenseList');
-  }
-
-  if (typeof type === 'object') {
-    switch (type.$$typeof) {
-      case REACT_FORWARD_REF_TYPE:
-        return describeFunctionComponentFrame(type.render);
-
-      case REACT_MEMO_TYPE:
-        // Memo may contain any component type so we recursively resolve it.
-        return describeUnknownElementTypeFrameInDEV(type.type, source, ownerFn);
-
-      case REACT_BLOCK_TYPE:
-        return describeFunctionComponentFrame(type._render);
-
-      case REACT_LAZY_TYPE:
-        {
-          var lazyComponent = type;
-          var payload = lazyComponent._payload;
-          var init = lazyComponent._init;
-
-          try {
-            // Lazy may contain any component type so we recursively resolve it.
-            return describeUnknownElementTypeFrameInDEV(init(payload), source, ownerFn);
-          } catch (x) {}
-        }
-    }
-  }
-
-  return '';
-}
-
-var loggedTypeFailures = {};
-var ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
-
-function setCurrentlyValidatingElement(element) {
-  {
-    if (element) {
-      var owner = element._owner;
-      var stack = describeUnknownElementTypeFrameInDEV(element.type, element._source, owner ? owner.type : null);
-      ReactDebugCurrentFrame.setExtraStackFrame(stack);
-    } else {
-      ReactDebugCurrentFrame.setExtraStackFrame(null);
-    }
-  }
-}
-
-function checkPropTypes(typeSpecs, values, location, componentName, element) {
-  {
-    // $FlowFixMe This is okay but Flow doesn't know it.
-    var has = Function.call.bind(Object.prototype.hasOwnProperty);
-
-    for (var typeSpecName in typeSpecs) {
-      if (has(typeSpecs, typeSpecName)) {
-        var error$1 = void 0; // Prop type validation may throw. In case they do, we don't want to
-        // fail the render phase where it didn't fail before. So we log it.
-        // After these have been cleaned up, we'll let them throw.
-
-        try {
-          // This is intentionally an invariant that gets caught. It's the same
-          // behavior as without this statement except with a better message.
-          if (typeof typeSpecs[typeSpecName] !== 'function') {
-            var err = Error((componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.' + 'This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.');
-            err.name = 'Invariant Violation';
-            throw err;
-          }
-
-          error$1 = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED');
-        } catch (ex) {
-          error$1 = ex;
-        }
-
-        if (error$1 && !(error$1 instanceof Error)) {
-          setCurrentlyValidatingElement(element);
-
-          error('%s: type specification of %s' + ' `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error$1);
-
-          setCurrentlyValidatingElement(null);
-        }
-
-        if (error$1 instanceof Error && !(error$1.message in loggedTypeFailures)) {
-          // Only monitor this failure once because there tends to be a lot of the
-          // same error.
-          loggedTypeFailures[error$1.message] = true;
-          setCurrentlyValidatingElement(element);
-
-          error('Failed %s type: %s', location, error$1.message);
-
-          setCurrentlyValidatingElement(null);
-        }
-      }
-    }
-  }
-}
-
-var ReactCurrentOwner = ReactSharedInternals.ReactCurrentOwner;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var RESERVED_PROPS = {
-  key: true,
-  ref: true,
-  __self: true,
-  __source: true
-};
-var specialPropKeyWarningShown;
-var specialPropRefWarningShown;
-var didWarnAboutStringRefs;
-
-{
-  didWarnAboutStringRefs = {};
-}
-
-function hasValidRef(config) {
-  {
-    if (hasOwnProperty.call(config, 'ref')) {
-      var getter = Object.getOwnPropertyDescriptor(config, 'ref').get;
-
-      if (getter && getter.isReactWarning) {
-        return false;
-      }
-    }
-  }
-
-  return config.ref !== undefined;
-}
-
-function hasValidKey(config) {
-  {
-    if (hasOwnProperty.call(config, 'key')) {
-      var getter = Object.getOwnPropertyDescriptor(config, 'key').get;
-
-      if (getter && getter.isReactWarning) {
-        return false;
-      }
-    }
-  }
-
-  return config.key !== undefined;
-}
-
-function warnIfStringRefCannotBeAutoConverted(config, self) {
-  {
-    if (typeof config.ref === 'string' && ReactCurrentOwner.current && self && ReactCurrentOwner.current.stateNode !== self) {
-      var componentName = getComponentName(ReactCurrentOwner.current.type);
-
-      if (!didWarnAboutStringRefs[componentName]) {
-        error('Component "%s" contains the string ref "%s". ' + 'Support for string refs will be removed in a future major release. ' + 'This case cannot be automatically converted to an arrow function. ' + 'We ask you to manually fix this case by using useRef() or createRef() instead. ' + 'Learn more about using refs safely here: ' + 'https://reactjs.org/link/strict-mode-string-ref', getComponentName(ReactCurrentOwner.current.type), config.ref);
-
-        didWarnAboutStringRefs[componentName] = true;
-      }
-    }
-  }
-}
-
-function defineKeyPropWarningGetter(props, displayName) {
-  {
-    var warnAboutAccessingKey = function () {
-      if (!specialPropKeyWarningShown) {
-        specialPropKeyWarningShown = true;
-
-        error('%s: `key` is not a prop. Trying to access it will result ' + 'in `undefined` being returned. If you need to access the same ' + 'value within the child component, you should pass it as a different ' + 'prop. (https://reactjs.org/link/special-props)', displayName);
-      }
-    };
-
-    warnAboutAccessingKey.isReactWarning = true;
-    Object.defineProperty(props, 'key', {
-      get: warnAboutAccessingKey,
-      configurable: true
-    });
-  }
-}
-
-function defineRefPropWarningGetter(props, displayName) {
-  {
-    var warnAboutAccessingRef = function () {
-      if (!specialPropRefWarningShown) {
-        specialPropRefWarningShown = true;
-
-        error('%s: `ref` is not a prop. Trying to access it will result ' + 'in `undefined` being returned. If you need to access the same ' + 'value within the child component, you should pass it as a different ' + 'prop. (https://reactjs.org/link/special-props)', displayName);
-      }
-    };
-
-    warnAboutAccessingRef.isReactWarning = true;
-    Object.defineProperty(props, 'ref', {
-      get: warnAboutAccessingRef,
-      configurable: true
-    });
-  }
-}
-/**
- * Factory method to create a new React element. This no longer adheres to
- * the class pattern, so do not use new to call it. Also, instanceof check
- * will not work. Instead test $$typeof field against Symbol.for('react.element') to check
- * if something is a React Element.
- *
- * @param {*} type
- * @param {*} props
- * @param {*} key
- * @param {string|object} ref
- * @param {*} owner
- * @param {*} self A *temporary* helper to detect places where `this` is
- * different from the `owner` when React.createElement is called, so that we
- * can warn. We want to get rid of owner and replace string `ref`s with arrow
- * functions, and as long as `this` and owner are the same, there will be no
- * change in behavior.
- * @param {*} source An annotation object (added by a transpiler or otherwise)
- * indicating filename, line number, and/or other information.
- * @internal
- */
-
-
-var ReactElement = function (type, key, ref, self, source, owner, props) {
-  var element = {
-    // This tag allows us to uniquely identify this as a React Element
-    $$typeof: REACT_ELEMENT_TYPE,
-    // Built-in properties that belong on the element
-    type: type,
-    key: key,
-    ref: ref,
-    props: props,
-    // Record the component responsible for creating this element.
-    _owner: owner
-  };
-
-  {
-    // The validation flag is currently mutative. We put it on
-    // an external backing store so that we can freeze the whole object.
-    // This can be replaced with a WeakMap once they are implemented in
-    // commonly used development environments.
-    element._store = {}; // To make comparing ReactElements easier for testing purposes, we make
-    // the validation flag non-enumerable (where possible, which should
-    // include every environment we run tests in), so the test framework
-    // ignores it.
-
-    Object.defineProperty(element._store, 'validated', {
-      configurable: false,
-      enumerable: false,
-      writable: true,
-      value: false
-    }); // self and source are DEV only properties.
-
-    Object.defineProperty(element, '_self', {
-      configurable: false,
-      enumerable: false,
-      writable: false,
-      value: self
-    }); // Two elements created in two different places should be considered
-    // equal for testing purposes and therefore we hide it from enumeration.
-
-    Object.defineProperty(element, '_source', {
-      configurable: false,
-      enumerable: false,
-      writable: false,
-      value: source
-    });
-
-    if (Object.freeze) {
-      Object.freeze(element.props);
-      Object.freeze(element);
-    }
-  }
-
-  return element;
-};
-/**
- * https://github.com/reactjs/rfcs/pull/107
- * @param {*} type
- * @param {object} props
- * @param {string} key
- */
-
-function jsxDEV(type, config, maybeKey, source, self) {
-  {
-    var propName; // Reserved names are extracted
-
-    var props = {};
-    var key = null;
-    var ref = null; // Currently, key can be spread in as a prop. This causes a potential
-    // issue if key is also explicitly declared (ie. <div {...props} key="Hi" />
-    // or <div key="Hi" {...props} /> ). We want to deprecate key spread,
-    // but as an intermediary step, we will use jsxDEV for everything except
-    // <div {...props} key="Hi" />, because we aren't currently able to tell if
-    // key is explicitly declared to be undefined or not.
-
-    if (maybeKey !== undefined) {
-      key = '' + maybeKey;
-    }
-
-    if (hasValidKey(config)) {
-      key = '' + config.key;
-    }
-
-    if (hasValidRef(config)) {
-      ref = config.ref;
-      warnIfStringRefCannotBeAutoConverted(config, self);
-    } // Remaining properties are added to a new props object
-
-
-    for (propName in config) {
-      if (hasOwnProperty.call(config, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
-        props[propName] = config[propName];
-      }
-    } // Resolve default props
-
-
-    if (type && type.defaultProps) {
-      var defaultProps = type.defaultProps;
-
-      for (propName in defaultProps) {
-        if (props[propName] === undefined) {
-          props[propName] = defaultProps[propName];
-        }
-      }
-    }
-
-    if (key || ref) {
-      var displayName = typeof type === 'function' ? type.displayName || type.name || 'Unknown' : type;
-
-      if (key) {
-        defineKeyPropWarningGetter(props, displayName);
-      }
-
-      if (ref) {
-        defineRefPropWarningGetter(props, displayName);
-      }
-    }
-
-    return ReactElement(type, key, ref, self, source, ReactCurrentOwner.current, props);
-  }
-}
-
-var ReactCurrentOwner$1 = ReactSharedInternals.ReactCurrentOwner;
-var ReactDebugCurrentFrame$1 = ReactSharedInternals.ReactDebugCurrentFrame;
-
-function setCurrentlyValidatingElement$1(element) {
-  {
-    if (element) {
-      var owner = element._owner;
-      var stack = describeUnknownElementTypeFrameInDEV(element.type, element._source, owner ? owner.type : null);
-      ReactDebugCurrentFrame$1.setExtraStackFrame(stack);
-    } else {
-      ReactDebugCurrentFrame$1.setExtraStackFrame(null);
-    }
-  }
-}
-
-var propTypesMisspellWarningShown;
-
-{
-  propTypesMisspellWarningShown = false;
-}
-/**
- * Verifies the object is a ReactElement.
- * See https://reactjs.org/docs/react-api.html#isvalidelement
- * @param {?object} object
- * @return {boolean} True if `object` is a ReactElement.
- * @final
- */
-
-function isValidElement(object) {
-  {
-    return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
-  }
-}
-
-function getDeclarationErrorAddendum() {
-  {
-    if (ReactCurrentOwner$1.current) {
-      var name = getComponentName(ReactCurrentOwner$1.current.type);
-
-      if (name) {
-        return '\n\nCheck the render method of `' + name + '`.';
-      }
-    }
-
-    return '';
-  }
-}
-
-function getSourceInfoErrorAddendum(source) {
-  {
-    if (source !== undefined) {
-      var fileName = source.fileName.replace(/^.*[\\\/]/, '');
-      var lineNumber = source.lineNumber;
-      return '\n\nCheck your code at ' + fileName + ':' + lineNumber + '.';
-    }
-
-    return '';
-  }
-}
-/**
- * Warn if there's no key explicitly set on dynamic arrays of children or
- * object keys are not valid. This allows us to keep track of children between
- * updates.
- */
-
-
-var ownerHasKeyUseWarning = {};
-
-function getCurrentComponentErrorInfo(parentType) {
-  {
-    var info = getDeclarationErrorAddendum();
-
-    if (!info) {
-      var parentName = typeof parentType === 'string' ? parentType : parentType.displayName || parentType.name;
-
-      if (parentName) {
-        info = "\n\nCheck the top-level render call using <" + parentName + ">.";
-      }
-    }
-
-    return info;
-  }
-}
-/**
- * Warn if the element doesn't have an explicit key assigned to it.
- * This element is in an array. The array could grow and shrink or be
- * reordered. All children that haven't already been validated are required to
- * have a "key" property assigned to it. Error statuses are cached so a warning
- * will only be shown once.
- *
- * @internal
- * @param {ReactElement} element Element that requires a key.
- * @param {*} parentType element's parent's type.
- */
-
-
-function validateExplicitKey(element, parentType) {
-  {
-    if (!element._store || element._store.validated || element.key != null) {
-      return;
-    }
-
-    element._store.validated = true;
-    var currentComponentErrorInfo = getCurrentComponentErrorInfo(parentType);
-
-    if (ownerHasKeyUseWarning[currentComponentErrorInfo]) {
-      return;
-    }
-
-    ownerHasKeyUseWarning[currentComponentErrorInfo] = true; // Usually the current owner is the offender, but if it accepts children as a
-    // property, it may be the creator of the child that's responsible for
-    // assigning it a key.
-
-    var childOwner = '';
-
-    if (element && element._owner && element._owner !== ReactCurrentOwner$1.current) {
-      // Give the component that originally created this child.
-      childOwner = " It was passed a child from " + getComponentName(element._owner.type) + ".";
-    }
-
-    setCurrentlyValidatingElement$1(element);
-
-    error('Each child in a list should have a unique "key" prop.' + '%s%s See https://reactjs.org/link/warning-keys for more information.', currentComponentErrorInfo, childOwner);
-
-    setCurrentlyValidatingElement$1(null);
-  }
-}
-/**
- * Ensure that every element either is passed in a static location, in an
- * array with an explicit keys property defined, or in an object literal
- * with valid key property.
- *
- * @internal
- * @param {ReactNode} node Statically passed child of any type.
- * @param {*} parentType node's parent's type.
- */
-
-
-function validateChildKeys(node, parentType) {
-  {
-    if (typeof node !== 'object') {
-      return;
-    }
-
-    if (Array.isArray(node)) {
-      for (var i = 0; i < node.length; i++) {
-        var child = node[i];
-
-        if (isValidElement(child)) {
-          validateExplicitKey(child, parentType);
-        }
-      }
-    } else if (isValidElement(node)) {
-      // This element was passed in a valid location.
-      if (node._store) {
-        node._store.validated = true;
-      }
-    } else if (node) {
-      var iteratorFn = getIteratorFn(node);
-
-      if (typeof iteratorFn === 'function') {
-        // Entry iterators used to provide implicit keys,
-        // but now we print a separate warning for them later.
-        if (iteratorFn !== node.entries) {
-          var iterator = iteratorFn.call(node);
-          var step;
-
-          while (!(step = iterator.next()).done) {
-            if (isValidElement(step.value)) {
-              validateExplicitKey(step.value, parentType);
-            }
-          }
-        }
-      }
-    }
-  }
-}
-/**
- * Given an element, validate that its props follow the propTypes definition,
- * provided by the type.
- *
- * @param {ReactElement} element
- */
-
-
-function validatePropTypes(element) {
-  {
-    var type = element.type;
-
-    if (type === null || type === undefined || typeof type === 'string') {
-      return;
-    }
-
-    var propTypes;
-
-    if (typeof type === 'function') {
-      propTypes = type.propTypes;
-    } else if (typeof type === 'object' && (type.$$typeof === REACT_FORWARD_REF_TYPE || // Note: Memo only checks outer props here.
-    // Inner props are checked in the reconciler.
-    type.$$typeof === REACT_MEMO_TYPE)) {
-      propTypes = type.propTypes;
-    } else {
-      return;
-    }
-
-    if (propTypes) {
-      // Intentionally inside to avoid triggering lazy initializers:
-      var name = getComponentName(type);
-      checkPropTypes(propTypes, element.props, 'prop', name, element);
-    } else if (type.PropTypes !== undefined && !propTypesMisspellWarningShown) {
-      propTypesMisspellWarningShown = true; // Intentionally inside to avoid triggering lazy initializers:
-
-      var _name = getComponentName(type);
-
-      error('Component %s declared `PropTypes` instead of `propTypes`. Did you misspell the property assignment?', _name || 'Unknown');
-    }
-
-    if (typeof type.getDefaultProps === 'function' && !type.getDefaultProps.isReactClassApproved) {
-      error('getDefaultProps is only used on classic React.createClass ' + 'definitions. Use a static property named `defaultProps` instead.');
-    }
-  }
-}
-/**
- * Given a fragment, validate that it can only be provided with fragment props
- * @param {ReactElement} fragment
- */
-
-
-function validateFragmentProps(fragment) {
-  {
-    var keys = Object.keys(fragment.props);
-
-    for (var i = 0; i < keys.length; i++) {
-      var key = keys[i];
-
-      if (key !== 'children' && key !== 'key') {
-        setCurrentlyValidatingElement$1(fragment);
-
-        error('Invalid prop `%s` supplied to `React.Fragment`. ' + 'React.Fragment can only have `key` and `children` props.', key);
-
-        setCurrentlyValidatingElement$1(null);
-        break;
-      }
-    }
-
-    if (fragment.ref !== null) {
-      setCurrentlyValidatingElement$1(fragment);
-
-      error('Invalid attribute `ref` supplied to `React.Fragment`.');
-
-      setCurrentlyValidatingElement$1(null);
-    }
-  }
-}
-
-function jsxWithValidation(type, props, key, isStaticChildren, source, self) {
-  {
-    var validType = isValidElementType(type); // We warn in this case but don't throw. We expect the element creation to
-    // succeed and there will likely be errors in render.
-
-    if (!validType) {
-      var info = '';
-
-      if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
-        info += ' You likely forgot to export your component from the file ' + "it's defined in, or you might have mixed up default and named imports.";
-      }
-
-      var sourceInfo = getSourceInfoErrorAddendum(source);
-
-      if (sourceInfo) {
-        info += sourceInfo;
-      } else {
-        info += getDeclarationErrorAddendum();
-      }
-
-      var typeString;
-
-      if (type === null) {
-        typeString = 'null';
-      } else if (Array.isArray(type)) {
-        typeString = 'array';
-      } else if (type !== undefined && type.$$typeof === REACT_ELEMENT_TYPE) {
-        typeString = "<" + (getComponentName(type.type) || 'Unknown') + " />";
-        info = ' Did you accidentally export a JSX literal instead of a component?';
-      } else {
-        typeString = typeof type;
-      }
-
-      error('React.jsx: type is invalid -- expected a string (for ' + 'built-in components) or a class/function (for composite ' + 'components) but got: %s.%s', typeString, info);
-    }
-
-    var element = jsxDEV(type, props, key, source, self); // The result can be nullish if a mock or a custom function is used.
-    // TODO: Drop this when these are no longer allowed as the type argument.
-
-    if (element == null) {
-      return element;
-    } // Skip key warning if the type isn't valid since our key validation logic
-    // doesn't expect a non-string/function type and can throw confusing errors.
-    // We don't want exception behavior to differ between dev and prod.
-    // (Rendering will throw with a helpful message and as soon as the type is
-    // fixed, the key warnings will appear.)
-
-
-    if (validType) {
-      var children = props.children;
-
-      if (children !== undefined) {
-        if (isStaticChildren) {
-          if (Array.isArray(children)) {
-            for (var i = 0; i < children.length; i++) {
-              validateChildKeys(children[i], type);
-            }
-
-            if (Object.freeze) {
-              Object.freeze(children);
-            }
-          } else {
-            error('React.jsx: Static children should always be an array. ' + 'You are likely explicitly calling React.jsxs or React.jsxDEV. ' + 'Use the Babel transform instead.');
-          }
-        } else {
-          validateChildKeys(children, type);
-        }
-      }
-    }
-
-    if (type === exports.Fragment) {
-      validateFragmentProps(element);
-    } else {
-      validatePropTypes(element);
-    }
-
-    return element;
-  }
-} // These two functions exist to still get child warnings in dev
-// even with the prod transform. This means that jsxDEV is purely
-// opt-in behavior for better messages but that we won't stop
-// giving you warnings if you use production apis.
-
-function jsxWithValidationStatic(type, props, key) {
-  {
-    return jsxWithValidation(type, props, key, true);
-  }
-}
-function jsxWithValidationDynamic(type, props, key) {
-  {
-    return jsxWithValidation(type, props, key, false);
-  }
-}
-
-var jsx =  jsxWithValidationDynamic ; // we may want to special case jsxs internally to take advantage of static children.
-// for now we can ship identical prod functions
-
-var jsxs =  jsxWithValidationStatic ;
-
-exports.jsx = jsx;
-exports.jsxs = jsxs;
-  })();
-}
-
-
-/***/ }),
-
 /***/ "./node_modules/react/cjs/react.development.js":
 /*!*****************************************************!*\
   !*** ./node_modules/react/cjs/react.development.js ***!
@@ -72649,22 +73213,6 @@ if (false) {} else {
 
 /***/ }),
 
-/***/ "./node_modules/react/jsx-runtime.js":
-/*!*******************************************!*\
-  !*** ./node_modules/react/jsx-runtime.js ***!
-  \*******************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-if (false) {} else {
-  module.exports = __webpack_require__(/*! ./cjs/react-jsx-runtime.development.js */ "./node_modules/react/cjs/react-jsx-runtime.development.js");
-}
-
-
-/***/ }),
-
 /***/ "./node_modules/resolve-pathname/esm/resolve-pathname.js":
 /*!***************************************************************!*\
   !*** ./node_modules/resolve-pathname/esm/resolve-pathname.js ***!
@@ -74494,7 +75042,41 @@ function valueEqual(a, b) {
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
+/******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/chunk loaded */
+/******/ 	(() => {
+/******/ 		var deferred = [];
+/******/ 		__webpack_require__.O = (result, chunkIds, fn, priority) => {
+/******/ 			if(chunkIds) {
+/******/ 				priority = priority || 0;
+/******/ 				for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
+/******/ 				deferred[i] = [chunkIds, fn, priority];
+/******/ 				return;
+/******/ 			}
+/******/ 			var notFulfilled = Infinity;
+/******/ 			for (var i = 0; i < deferred.length; i++) {
+/******/ 				var [chunkIds, fn, priority] = deferred[i];
+/******/ 				var fulfilled = true;
+/******/ 				for (var j = 0; j < chunkIds.length; j++) {
+/******/ 					if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every((key) => (__webpack_require__.O[key](chunkIds[j])))) {
+/******/ 						chunkIds.splice(j--, 1);
+/******/ 					} else {
+/******/ 						fulfilled = false;
+/******/ 						if(priority < notFulfilled) notFulfilled = priority;
+/******/ 					}
+/******/ 				}
+/******/ 				if(fulfilled) {
+/******/ 					deferred.splice(i--, 1)
+/******/ 					result = fn();
+/******/ 				}
+/******/ 			}
+/******/ 			return result;
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	(() => {
 /******/ 		// getDefaultExport function for compatibility with non-harmony modules
@@ -74556,17 +75138,66 @@ function valueEqual(a, b) {
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/jsonp chunk loading */
+/******/ 	(() => {
+/******/ 		// no baseURI
+/******/ 		
+/******/ 		// object to store loaded and loading chunks
+/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 		var installedChunks = {
+/******/ 			"/js/app": 0,
+/******/ 			"css/app": 0
+/******/ 		};
+/******/ 		
+/******/ 		// no chunk on demand loading
+/******/ 		
+/******/ 		// no prefetching
+/******/ 		
+/******/ 		// no preloaded
+/******/ 		
+/******/ 		// no HMR
+/******/ 		
+/******/ 		// no HMR manifest
+/******/ 		
+/******/ 		__webpack_require__.O.j = (chunkId) => (installedChunks[chunkId] === 0);
+/******/ 		
+/******/ 		// install a JSONP callback for chunk loading
+/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
+/******/ 			var [chunkIds, moreModules, runtime] = data;
+/******/ 			// add "moreModules" to the modules object,
+/******/ 			// then flag all "chunkIds" as loaded and fire callback
+/******/ 			var moduleId, chunkId, i = 0;
+/******/ 			for(moduleId in moreModules) {
+/******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 					__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 				}
+/******/ 			}
+/******/ 			if(runtime) var result = runtime(__webpack_require__);
+/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 			for(;i < chunkIds.length; i++) {
+/******/ 				chunkId = chunkIds[i];
+/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 					installedChunks[chunkId][0]();
+/******/ 				}
+/******/ 				installedChunks[chunkIds[i]] = 0;
+/******/ 			}
+/******/ 			return __webpack_require__.O(result);
+/******/ 		}
+/******/ 		
+/******/ 		var chunkLoadingGlobal = self["webpackChunk"] = self["webpackChunk"] || [];
+/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ 	})();
+/******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
-(() => {
-/*!*****************************!*\
-  !*** ./resources/js/app.js ***!
-  \*****************************/
-__webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
-
-__webpack_require__(/*! ./components/App */ "./resources/js/components/App.js");
-})();
-
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
+/******/ 	__webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/js/app.js")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/css/app.css")))
+/******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
+/******/ 	
 /******/ })()
 ;

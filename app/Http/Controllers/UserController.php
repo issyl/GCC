@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Players;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Requests\PlayerRequest;
+use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Hash;
 
-class PlayerController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,10 +16,10 @@ class PlayerController extends Controller
      */
     public function index()
     {
-        $player = Players::paginate(10);
+        $user = User::paginate(10);
 
-        return view('players.index', [
-            'player' => $player
+        return view('users.index', [
+            'user' => $user
         ]);
     }
 
@@ -30,7 +30,7 @@ class PlayerController extends Controller
      */
     public function create()
     {
-        return view('players.create');
+        return view('users.create');
     }
 
     /**
@@ -39,39 +39,37 @@ class PlayerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        Players::create([
+        User::create([
             'name' => $request->name,
-            'team' => $request->team,
-            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('players.index');
+        return redirect()->route('users.index');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Players  $player
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
-    public function show(Players $player)
+    public function show(User $user)
     {
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Players  $player
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
-    public function edit(Players $player)
+    public function edit(User $user)
     {
-        return view('players.edit', [
-            'item' => $player
+        return view('users.edit', [
+            'item' => $user
         ]);
     }
 
@@ -79,32 +77,32 @@ class PlayerController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Players  $player
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Players $player)
+    public function update(Request $request, User $user)
     {
         $data = $request->all();
 
         // if ($request->file('profile_photo_paths')) {
-        //     $data['profile_photo_path'] = $request->file('profile_photo_path')->store('assets/player', 'public');
+        //     $data['profile_photo_path'] = $request->file('profile_photo_path')->store('assets/user', 'public');
         // }
 
-        $player->update($data);
+        $user->update($data);
 
-        return redirect()->route('players.index');
+        return redirect()->route('users.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Players  $player
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Players $player)
+    public function destroy(User $user)
     {
-        $player->delete();
+        $user->delete();
 
-        return redirect()->route('players.index');
+        return redirect()->route('users.index');
     }
 }

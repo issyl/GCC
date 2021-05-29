@@ -16,19 +16,20 @@ class CreateTournamentsTable extends Migration
         Schema::create('tournaments', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->String('name');
-            $table->String('team');
-            $table->foreign('team')->references('team')->on('players')->onDelete('cascade');
-            $table->String('game_id');
+            $table->unsignedBigInteger('team_id');
+            $table->foreign('team_id')->references('id')->on('players')->onDelete('cascade');
+            $table->unsignedBigInteger('game_id');
             $table->foreign('game_id')->references('id')->on('games')->onDelete('cascade');
-            $table->String('server_id');
-            $table->foreign('server_id')->references('id')->on('servers')->onDelete('cascade');
+            $table->unsignedBigInteger('region_id');
+            $table->foreign('region_id')->references('id')->on('regions')->onDelete('cascade');
             $table->date('date');
+            $table->String('status');
             $table->String('prize');
             $table->timestamps();
         });
     }
 
-    /**
+    /** 
      * Reverse the migrations.
      *
      * @return void
