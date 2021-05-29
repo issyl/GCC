@@ -2,56 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Tournament;
+use Illuminate\Http\Request;
+use App\Http\Requests\TournamentRequest;
 
-class tournamentController extends Controller
+class TournamentController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
-     */
-    // public function index()
-    // {
-    //     $tournaments = Tournament::all();
-
-    //     return $tournaments->toJson();
-    // }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function index()
     {
-        // $tournaments = Tournament::paginate(10);
-        $tournaments = Tournament::join('games', 'tournaments.games_id', '=', 'games.id')
-            ->join('servers', 'tournaments.server_id', '=', 'servers.id')
-            ->select('tournament.*', 'games.game', 'servers.server')
+        $tournament = Tournament::select('tournaments.*', 'games.game', 'regions.region', 'players.team')->join('games', 'tournaments.game_id', '=', 'games.id')
+            ->join('regions', 'tournaments.region_id', '=', 'regions.id')->join('players', 'tournaments.team_id', '=', 'players.id')
             ->get();
 
         return view('tournaments.index', [
-            'tournaments' => $tournaments
-        ]);
-    }
-
-    public function katalog()
-    {
-
-        $katalog = Tournament::get();
-        // $testi = Testimonial::get();
-        return view('welcome', [
-            'katalog' => $katalog,
-            // 'testi' => $testi
+            'tournaments' => $tournament
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function create()
     {
@@ -62,15 +38,13 @@ class tournamentController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(TournamentRequest $request)
     {
-        $data = $request->all();
-
-        // $data['picturePath'] = $request->file('picturePath')->store('assets/tournaments', 'public');
-
-        Tournament::create($data);
+        Tournament::create([
+            'tournament' => $request->tournament,
+        ]);
 
         return redirect()->route('tournaments.index');
     }
@@ -78,24 +52,23 @@ class tournamentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Tournament  $tournament
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
-    public function show($id)
+    public function show(Tournament $tournament)
     {
-        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Tournament  $tournament
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
-    public function edit(Tournament $tournaments)
+    public function edit(Tournament $tournament)
     {
         return view('tournaments.edit', [
-            'item' => $tournaments
+            'item' => $tournament
         ]);
     }
 
@@ -103,14 +76,18 @@ class tournamentController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Tournament  $tournament
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Tournament $tournaments)
+    public function update(Request $request, Tournament $tournament)
     {
         $data = $request->all();
 
-        $tournaments->update($data);
+        // if ($request->file('profile_photo_paths')) {
+        //     $data['profile_photo_path'] = $request->file('profile_photo_path')->store('assets/tournament', 'public');
+        // }
+
+        $tournament->update($data);
 
         return redirect()->route('tournaments.index');
     }
@@ -118,12 +95,13 @@ class tournamentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Tournament  $tournament
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Tournament $tournaments)
+    public function destroy(Tournament $tournament)
     {
-        $tournaments->delete();
+        $tournament->delete();
+
         return redirect()->route('tournaments.index');
     }
 }

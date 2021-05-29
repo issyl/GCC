@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Region;
 use Illuminate\Http\Request;
-use App\Http\Requests\GameRequest;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\RegionRequest;
 
 class RegionController extends Controller
 {
@@ -39,7 +38,7 @@ class RegionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(RegionRequest $request)
     {
         Region::create([
             'region' => $request->region,

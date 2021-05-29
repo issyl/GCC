@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use Illuminate\Http\Request;
 use App\Http\Requests\GameRequest;
-use Illuminate\Support\Facades\Hash;
 
 class GameController extends Controller
 {
@@ -39,7 +38,7 @@ class GameController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(GameRequest $request)
     {
         Game::create([
             'game' => $request->game,
