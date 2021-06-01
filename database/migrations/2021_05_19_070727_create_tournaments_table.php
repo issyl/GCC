@@ -15,7 +15,7 @@ class CreateTournamentsTable extends Migration
     {
         Schema::create('tournaments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->String('name');
+            $table->String('name')->default('');
             $table->unsignedBigInteger('team_id');
             $table->foreign('team_id')->references('id')->on('players')->onDelete('cascade');
             $table->unsignedBigInteger('game_id');

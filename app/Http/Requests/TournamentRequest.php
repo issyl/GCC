@@ -16,9 +16,9 @@ class TournamentRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'team_id' => ['required', 'string', 'max:255'],
-            'game_id' => ['required', 'string', 'max:255'],
-            'region_id' => ['required', 'string', 'max:255'],
+            'team_id' => ['required'],
+            'game_id' => ['required'],
+            'region_id' => ['required'],
             'date' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', 'max:255'],
             'prize' => ['required', 'string', 'max:255'],

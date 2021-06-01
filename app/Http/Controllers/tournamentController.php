@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tournament;
+use App\Models\Players;
+use App\Models\Game;
+use App\Models\Region;
 use Illuminate\Http\Request;
 use App\Http\Requests\TournamentRequest;
+use Illuminate\Support\Facades\DB;
 
 class TournamentController extends Controller
 {
@@ -17,10 +21,10 @@ class TournamentController extends Controller
     {
         $tournament = Tournament::select('tournaments.*', 'games.game', 'regions.region', 'players.team')->join('games', 'tournaments.game_id', '=', 'games.id')
             ->join('regions', 'tournaments.region_id', '=', 'regions.id')->join('players', 'tournaments.team_id', '=', 'players.id')
-            ->get();
+            ->paginate(10);
 
         return view('tournaments.index', [
-            'tournaments' => $tournament
+            'tournament' => $tournament
         ]);
     }
 
@@ -31,7 +35,22 @@ class TournamentController extends Controller
      */
     public function create()
     {
-        return view('tournaments.create');
+        $tournament = DB::table('tournaments')
+            ->join('regions', 'tournaments.region_id', '=', 'regions.id')
+            ->join('players', 'tournaments.team_id', '=', 'players.id')
+            ->join('games', 'tournaments.game_id', '=', 'games.id')
+            ->select('tournaments.*', 'games.game', 'regions.region', 'players.team')
+            ->get();
+
+        $player = Players::all();
+        $game = Game::all();
+        $region = Region::all();
+        return view('tournaments.create', [
+            'tournament' => $tournament,
+            'team' => $player,
+            'game' => $game,
+            'region' => $region
+        ]);
     }
 
     /**
@@ -40,10 +59,18 @@ class TournamentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(TournamentRequest $request)
+    public function store(Request $request)
     {
+        // dd($request)->team_id;
         Tournament::create([
-            'tournament' => $request->tournament,
+            // 'tournaments' => $request->tournament,
+            'name' => $request->name,
+            'team_id' => $request->team_id,
+            'game_id' => $request->game_id,
+            'region_id' => $request->region_id,
+            'date' => $request->date,
+            'status' => $request->status,
+            'prize' => $request->prize,
         ]);
 
         return redirect()->route('tournaments.index');
@@ -67,8 +94,15 @@ class TournamentController extends Controller
      */
     public function edit(Tournament $tournament)
     {
+
+        $player = Players::all();
+        $game = Game::all();
+        $region = Region::all();
         return view('tournaments.edit', [
-            'item' => $tournament
+            'tournament' => $tournament,
+            'team' => $player,
+            'game' => $game,
+            'region' => $region
         ]);
     }
 
@@ -81,6 +115,7 @@ class TournamentController extends Controller
      */
     public function update(Request $request, Tournament $tournament)
     {
+        // dd($request)->team_id;
         $data = $request->all();
 
         // if ($request->file('profile_photo_paths')) {

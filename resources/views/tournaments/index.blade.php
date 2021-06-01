@@ -51,7 +51,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="border text-center p-5">
+                            <td colspan="9" class="border text-center p-5">
                                 Data Not Found
                             </td>
                         </tr>
