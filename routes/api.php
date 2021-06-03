@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\tournamentController;
+use App\Http\Controllers\TournamentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +14,7 @@ use App\Http\Controllers\tournamentController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */ 
-Route::get('/tournament', [tournamentController::class, 'index']);
+Route::get('/tournament', [TournamentController::class, 'client']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

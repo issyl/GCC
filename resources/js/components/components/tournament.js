@@ -66,8 +66,10 @@ class tournament extends Component {
                         ARE YOU BRAVE ENOUGH TO SHOW THE WORLD WHO IS THE
                         CHAMPION? SIGN UP NOW!
                     </h1>
-                    <Link to="/signUp">
-                        <button>Join Now</button>
+                    <Link to="/signIn">
+                        <button className="joinNow">
+                            <p className="btnText">Join Now</p>
+                        </button>
                     </Link>
                 </div>
             </div>

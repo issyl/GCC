@@ -1,29 +1,33 @@
 import React from "react";
 import "./navBar.css";
 import { Link } from "react-router-dom";
+import logoGCC from './../img/GCC logo.png'
 
 const navBar = () => {
     return (
         <section id="navBar">
+            <img src={logoGCC}></img>
             <div className="navPosition">
-                <a href="/" className="navText">
+                <Link to="/" className="navText">
                     Home
-                </a>
-                <a href="/guide" className="navText">
+                </Link>
+                <Link to="/guide" className="navText">
                     Guide
-                </a>
-                <Link to="/tournament">
-                    <p className="navText">Tournament</p>
+                </Link>
+                <Link to="/tournament" className="navText">
+                    Tournament
                 </Link>
                 <Link to="/signIn" className="btnPosition">
-                    <button className="signIn">SIGN IN</button>
+                    <button className="signIn">
+                        <p className="btnText">Sign In</p>
+                    </button>
                 </Link>
                 <p className="navText">or</p>
-                <a href="#" className="btnPosition">
+                <Link to="/signUp" className="btnPosition">
                     <button className="signUp">
                         <p className="btnText">Sign Up</p>
                     </button>
-                </a>
+                </Link>
 
                 {/* <button className="signUp">
           <a href="#" className="navText">Sign Up</a>

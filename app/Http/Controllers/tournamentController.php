@@ -19,13 +19,27 @@ class TournamentController extends Controller
      */
     public function index()
     {
-        $tournament = Tournament::select('tournaments.*', 'games.game', 'regions.region', 'players.team')->join('games', 'tournaments.game_id', '=', 'games.id')
-            ->join('regions', 'tournaments.region_id', '=', 'regions.id')->join('players', 'tournaments.team_id', '=', 'players.id')
+        $tournament = Tournament::select('tournaments.*', 'games.game', 'regions.region', 'players.team')
+            ->join('games', 'tournaments.game_id', '=', 'games.id')
+            ->join('regions', 'tournaments.region_id', '=', 'regions.id')
+            ->join('players', 'tournaments.team_id', '=', 'players.id')
             ->paginate(10);
 
         return view('tournaments.index', [
             'tournament' => $tournament
         ]);
+    }
+
+    public function client()
+    {
+        $tournament = DB::table('tournaments')
+            ->join('regions', 'tournaments.region_id', '=', 'regions.id')
+            ->join('players', 'tournaments.team_id', '=', 'players.id')
+            ->join('games', 'tournaments.game_id', '=', 'games.id')
+            ->select('tournaments.*', 'games.game', 'regions.region', 'players.team')
+            ->get();
+
+        return $tournament->toJson();
     }
 
     /**
@@ -115,7 +129,7 @@ class TournamentController extends Controller
      */
     public function update(Request $request, Tournament $tournament)
     {
-        // dd($request)->team_id;
+        // dd($request);
         $data = $request->all();
 
         // if ($request->file('profile_photo_paths')) {

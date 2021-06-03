@@ -9,9 +9,13 @@ use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\GameController;
 
-Route::get('/', function () {
+Route::get('{path}', function () {
     return view('welcome');
 });
+
+// Route::get('/tournament', function () {
+//     return view('welcome');
+// });
 
 Route::prefix('dashboard')
     ->middleware(['auth:sanctum', 'verified'])
@@ -28,3 +32,4 @@ Route::prefix('dashboard')
     });
 
 Route::get('/', [DashboardController::class, 'website']);
+

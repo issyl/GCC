@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import SignIn from "./components/signIn";
+import SignUp from "./components/signUp";
 // import IndexComponents from "./components/indexComponents";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Nav from "./components/navBar";
@@ -8,6 +9,7 @@ import MainContent from "./components/mainContent";
 import Footer from "./components/footer";
 import ForgotPassword from "./components/forgotPassword";
 import Tournament from "./components/tournament";
+import Guide from "./components/guide";
 
 import "./App.css";
 
@@ -21,6 +23,9 @@ class App extends Component {
                             <Route exact path="/signIn">
                                 <SignIn />
                             </Route>
+                            <Route exact path="/signUp">
+                                <SignUp />
+                            </Route>
                             <Route exact path="/forgotPassword">
                                 <ForgotPassword />
                             </Route>
@@ -31,6 +36,9 @@ class App extends Component {
                                 </Route>
                                 <Route exact path="/tournament">
                                     <Tournament />
+                                </Route>
+                                <Route exact path="/guide">
+                                    <Guide />
                                 </Route>
                                 <Footer />
                             </>

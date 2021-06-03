@@ -1,16 +1,14 @@
 import React, { Component } from "react";
 import logo from "../img/GCC logo.png";
 import line from "../img/Line.png";
-import twitch from "../img/twitch.png";
-import google from "../img/google.png";
-import twitter from "../img/twitter.png";
-import steam from "../img/steam.png";
-import "./signIn.css";
+// import twitch from "../img/twitch.png";
+// import google from "../img/google.png";
+// import twitter from "../img/twitter.png";
+// import steam from "../img/steam.png";
+import "./signUp.css";
 import { Link, Redirect } from "react-router-dom";
 
-class signIn extends Component {
-
-
+class signUp extends Component {
     render() {
         const twitchClick = () => {
             window.location.href = "https://twitch.com";
@@ -28,12 +26,36 @@ class signIn extends Component {
             window.location.href = "https://store.steampowered.com/";
         };
         return (
-            <div id="signIn">
+            <div id="signUp">
                 <div className="backgroundSignIn">
                     <img className="logo" src={logo}></img>
-                    <h1>SIGN IN</h1>
+                    <h1>SIGN UP</h1>
                     <h3>to Continue to LLL</h3>
-                    <form className="formSignIn" onSubmit>
+                    <form className="formSignUp">
+                        <div className="formSection space">
+                            <label className="formText">NAME</label>
+                            <input
+                                className="formInput"
+                                type="text"
+                                name="name"
+                            />
+                        </div>
+                        <div className="formSection space">
+                            <label className="formText">TEAM</label>
+                            <input
+                                className="formInput"
+                                type="text"
+                                name="name"
+                            />
+                        </div>
+                        <div className="formSection space">
+                            <label className="formText">USERNAME</label>
+                            <input
+                                className="formInput"
+                                type="text"
+                                name="name"
+                            />
+                        </div>
                         <div className="formSection space">
                             <label className="formText">EMAIL</label>
                             <input
@@ -53,45 +75,20 @@ class signIn extends Component {
                         <button
                             className="formButton"
                             type="submit"
-                            name="signIn"
+                            name="signUp"
                         >
-                            SIGN IN
+                            SIGN UP
                         </button>
-                        <Link to="/forgotPassword"><a>forgot password?</a></Link>
+                        <Link to="/signIn">
+                            <a>have an account? Sign In here</a>
+                        </Link>
                         <img src={line} className="formSeparation"></img>
                     </form>
-                    <Link to="/signUp" className="signUpSize">
-                        <button className="signUpButton">
-                            CREATE FREE ACCOUNT
-                        </button>
-                    </Link>
-                    {/* <p>or sign in using</p>
-                    <div className="mediaSignIn">
-                        <img
-                            src={twitch}
-                            onClick={twitchClick}
-                            className="mediaImg"
-                        />
-                        <img
-                            src={google}
-                            onClick={gooogleClick}
-                            className="mediaImg"
-                        />
-                        <img
-                            src={twitter}
-                            onClick={twitterClick}
-                            className="mediaImg"
-                        />
-                        <img
-                            src={steam}
-                            onClick={steamClick}
-                            className="mediaImg"
-                        />
-                    </div> */}
+                    
                 </div>
             </div>
         );
     }
 }
 
-export default signIn;
+export default signUp;
