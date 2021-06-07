@@ -4463,8 +4463,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _img_GCC_logo_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../img/GCC logo.png */ "./resources/js/components/img/GCC logo.png");
 /* harmony import */ var _img_Line_png__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../img/Line.png */ "./resources/js/components/img/Line.png");
 /* harmony import */ var _signUp_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./signUp.css */ "./resources/js/components/components/signUp.css");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_4__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -4496,51 +4500,66 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+
 var signUp = /*#__PURE__*/function (_Component) {
   _inherits(signUp, _Component);
 
   var _super = _createSuper(signUp);
 
   function signUp() {
+    var _this;
+
     _classCallCheck(this, signUp);
 
-    return _super.apply(this, arguments);
+    _this = _super.call(this);
+    _this.state = {
+      name: "",
+      team: "",
+      username: "",
+      email: "",
+      password: "",
+      password_confirmation: ""
+    };
+    _this.createPlayer = _this.createPlayer.bind(_assertThisInitialized(_this));
+    _this.handleFieldChange = _this.handleFieldChange.bind(_assertThisInitialized(_this));
+    return _this;
   }
 
   _createClass(signUp, [{
+    key: "handleFieldChange",
+    value: function handleFieldChange(event) {
+      this.setState(_defineProperty({}, event.target.name, event.target.value));
+    }
+  }, {
+    key: "createPlayer",
+    value: function createPlayer(event) {
+      event.preventDefault(); // const player = {
+      //     name: this.state.name,
+      //     team: this.state.team,
+      //     username: this.state.username,
+      //     email: this.state.email,
+      //     password: this.state.password,
+      // };
+
+      axios__WEBPACK_IMPORTED_MODULE_4___default().post("/api/signUp", {
+        name: this.state.name,
+        team: this.state.team,
+        username: this.state.username,
+        email: this.state.email,
+        password: this.state.password,
+        password_confirmation: this.state.password_confirmation
+      }).then(function (response) {
+        console.log(response);
+      })["catch"](function (error) {
+        console.log(error);
+      });
+      this.setState({
+        name: ""
+      });
+    }
+  }, {
     key: "render",
-    value: // constructor() {
-    //     super();
-    //     this.state = {
-    //         name: "",
-    //         team: "",
-    //         username: "",
-    //         email: "",
-    //         password: "",
-    //     };
-    //     this.createPlayer = this.createPlayer.bind(this);
-    // }
-    // createPlayer(event) {
-    //     event.preventDefault();
-    //     const player = {
-    //         name: this.state.name,
-    //         team: this.state.team,
-    //         username: this.state.username,
-    //         email: this.state.email,
-    //         password: this.state.password,
-    //     };
-    //     axios
-    //         .post("/api/createPlayer", player)
-    //         .then((response) => {
-    //             this.setState({
-    //                 name: "",
-    //             });
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         });
-    // }
-    function render() {
+    value: function render() {
       var twitchClick = function twitchClick() {
         window.location.href = "https://twitch.com";
       };
@@ -4566,7 +4585,7 @@ var signUp = /*#__PURE__*/function (_Component) {
         src: _img_GCC_logo_png__WEBPACK_IMPORTED_MODULE_1__.default
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "SIGN UP"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, "to Continue to LLL"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("form", {
         className: "formSignUp",
-        onSubmit: createPlayer
+        onSubmit: this.createPlayer
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "formSection space"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
@@ -4575,7 +4594,8 @@ var signUp = /*#__PURE__*/function (_Component) {
         className: "formInput",
         type: "text",
         name: "name",
-        value: this.state.name
+        value: this.state.name,
+        onChange: this.handleFieldChange
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "formSection space"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
@@ -4584,7 +4604,8 @@ var signUp = /*#__PURE__*/function (_Component) {
         className: "formInput",
         type: "text",
         name: "team",
-        value: this.state.team
+        value: this.state.team,
+        onChange: this.handleFieldChange
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "formSection space"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
@@ -4593,7 +4614,8 @@ var signUp = /*#__PURE__*/function (_Component) {
         className: "formInput",
         type: "text",
         name: "username",
-        value: this.state.username
+        value: this.state.username,
+        onChange: this.handleFieldChange
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "formSection space"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
@@ -4602,7 +4624,8 @@ var signUp = /*#__PURE__*/function (_Component) {
         className: "formInput",
         type: "text",
         name: "email",
-        value: this.state.email
+        value: this.state.email,
+        onChange: this.handleFieldChange
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "formSection space"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
@@ -4611,14 +4634,25 @@ var signUp = /*#__PURE__*/function (_Component) {
         className: "formInput",
         type: "password",
         name: "password",
-        value: this.state.password
+        value: this.state.password,
+        onChange: this.handleFieldChange
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "formSection space"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
+        className: "formText"
+      }, "PASSWORD"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
+        className: "formInput",
+        type: "password",
+        name: "password_confirmation",
+        value: this.state.password_confirmation,
+        onChange: this.handleFieldChange
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
         className: "formButton",
         type: "submit",
         name: "signUp"
-      }, "SIGN UP"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__.Link, {
+      }, "SIGN UP"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
         to: "/signIn"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", null, "have an account? Sign In here")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "have an account? Sign In here")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
         src: _img_Line_png__WEBPACK_IMPORTED_MODULE_2__.default,
         className: "formSeparation"
       }))));

@@ -7,43 +7,61 @@ import line from "../img/Line.png";
 // import steam from "../img/steam.png";
 import "./signUp.css";
 import { Link, Redirect } from "react-router-dom";
+import axios from "axios";
 
 class signUp extends Component {
-    // constructor() {
-    //     super();
+    constructor() {
+        super();
 
-    //     this.state = {
-    //         name: "",
-    //         team: "",
-    //         username: "",
-    //         email: "",
-    //         password: "",
-    //     };
+        this.state = {
+            name: "",
+            team: "",
+            username: "",
+            email: "",
+            password: "",
+            password_confirmation: "",
+        };
 
-    //     this.createPlayer = this.createPlayer.bind(this);
-    // }
+        this.createPlayer = this.createPlayer.bind(this);
+        this.handleFieldChange = this.handleFieldChange.bind(this);
+    }
 
-    // createPlayer(event) {
-    //     event.preventDefault();
+    handleFieldChange (event) {
+        this.setState({
+          [event.target.name]: event.target.value,
+        })
+      }
 
-    //     const player = {
-    //         name: this.state.name,
-    //         team: this.state.team,
-    //         username: this.state.username,
-    //         email: this.state.email,
-    //         password: this.state.password,
-    //     };
-    //     axios
-    //         .post("/api/createPlayer", player)
-    //         .then((response) => {
-    //             this.setState({
-    //                 name: "",
-    //             });
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         });
-    // }
+    createPlayer(event) {
+        event.preventDefault();
+
+        // const player = {
+        //     name: this.state.name,
+        //     team: this.state.team,
+        //     username: this.state.username,
+        //     email: this.state.email,
+        //     password: this.state.password,
+        // };
+        axios
+            .post("/api/signUp", {
+                name: this.state.name,
+                team: this.state.team,
+                username: this.state.username,
+                email: this.state.email,
+                password: this.state.password,
+                password_confirmation: this.state.password_confirmation,
+            })
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        this.setState({
+            name: "",
+        });
+    }
 
     render() {
         const twitchClick = () => {
@@ -61,13 +79,14 @@ class signUp extends Component {
         const steamClick = () => {
             window.location.href = "https://store.steampowered.com/";
         };
+
         return (
             <div id="signUp">
                 <div className="backgroundSignIn">
                     <img className="logo" src={logo}></img>
                     <h1>SIGN UP</h1>
                     <h3>to Continue to LLL</h3>
-                    <form className="formSignUp" onSubmit={createPlayer}>
+                    <form className="formSignUp" onSubmit={this.createPlayer}>
                         <div className="formSection space">
                             <label className="formText">NAME</label>
                             <input
@@ -75,6 +94,7 @@ class signUp extends Component {
                                 type="text"
                                 name="name"
                                 value={this.state.name}
+                                onChange={this.handleFieldChange}
                             />
                         </div>
                         <div className="formSection space">
@@ -84,6 +104,7 @@ class signUp extends Component {
                                 type="text"
                                 name="team"
                                 value={this.state.team}
+                                onChange={this.handleFieldChange}
                             />
                         </div>
                         <div className="formSection space">
@@ -93,6 +114,7 @@ class signUp extends Component {
                                 type="text"
                                 name="username"
                                 value={this.state.username}
+                                onChange={this.handleFieldChange}
                             />
                         </div>
                         <div className="formSection space">
@@ -102,6 +124,7 @@ class signUp extends Component {
                                 type="text"
                                 name="email"
                                 value={this.state.email}
+                                onChange={this.handleFieldChange}
                             />
                         </div>
                         <div className="formSection space">
@@ -111,6 +134,17 @@ class signUp extends Component {
                                 type="password"
                                 name="password"
                                 value={this.state.password}
+                                onChange={this.handleFieldChange}
+                            />
+                        </div>
+                        <div className="formSection space">
+                            <label className="formText">PASSWORD</label>
+                            <input
+                                className="formInput"
+                                type="password"
+                                name="password_confirmation"
+                                value={this.state.password_confirmation}
+                                onChange={this.handleFieldChange}
                             />
                         </div>
                         <button
@@ -121,7 +155,7 @@ class signUp extends Component {
                             SIGN UP
                         </button>
                         <Link to="/signIn">
-                            <a>have an account? Sign In here</a>
+                            <p>have an account? Sign In here</p>
                         </Link>
                         <img src={line} className="formSeparation"></img>
                     </form>

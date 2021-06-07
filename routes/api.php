@@ -17,7 +17,7 @@ use App\Http\Controllers\PlayerController;
 */ 
 Route::get('/tournament', [TournamentController::class, 'client']);
 
-Route::post('/createPlayer', [PlayerController::class, 'createPlayer']);
+Route::post('/signUp', [PlayerController::class, 'createPlayer']);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
