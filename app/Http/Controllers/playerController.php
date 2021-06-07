@@ -52,6 +52,19 @@ class PlayerController extends Controller
         return redirect()->route('players.index');
     }
 
+    // public function createPlayer(PlayerRequest $request)
+    // {
+    //     Players::create([
+    //         'name' => $request->name,
+    //         'team' => $request->team,
+    //         'username' => $request->username,
+    //         'email' => $request->email,
+    //         'password' => Hash::make($request->password),
+    //     ]);
+
+    //     return redirect()->view('welcome');
+    // }
+
     /**
      * Display the specified resource.
      *

@@ -4509,7 +4509,38 @@ var signUp = /*#__PURE__*/function (_Component) {
 
   _createClass(signUp, [{
     key: "render",
-    value: function render() {
+    value: // constructor() {
+    //     super();
+    //     this.state = {
+    //         name: "",
+    //         team: "",
+    //         username: "",
+    //         email: "",
+    //         password: "",
+    //     };
+    //     this.createPlayer = this.createPlayer.bind(this);
+    // }
+    // createPlayer(event) {
+    //     event.preventDefault();
+    //     const player = {
+    //         name: this.state.name,
+    //         team: this.state.team,
+    //         username: this.state.username,
+    //         email: this.state.email,
+    //         password: this.state.password,
+    //     };
+    //     axios
+    //         .post("/api/createPlayer", player)
+    //         .then((response) => {
+    //             this.setState({
+    //                 name: "",
+    //             });
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         });
+    // }
+    function render() {
       var twitchClick = function twitchClick() {
         window.location.href = "https://twitch.com";
       };
@@ -4534,7 +4565,8 @@ var signUp = /*#__PURE__*/function (_Component) {
         className: "logo",
         src: _img_GCC_logo_png__WEBPACK_IMPORTED_MODULE_1__.default
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "SIGN UP"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, "to Continue to LLL"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("form", {
-        className: "formSignUp"
+        className: "formSignUp",
+        onSubmit: createPlayer
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "formSection space"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
@@ -4542,7 +4574,8 @@ var signUp = /*#__PURE__*/function (_Component) {
       }, "NAME"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
         className: "formInput",
         type: "text",
-        name: "name"
+        name: "name",
+        value: this.state.name
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "formSection space"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
@@ -4550,7 +4583,8 @@ var signUp = /*#__PURE__*/function (_Component) {
       }, "TEAM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
         className: "formInput",
         type: "text",
-        name: "name"
+        name: "team",
+        value: this.state.team
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "formSection space"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
@@ -4558,7 +4592,8 @@ var signUp = /*#__PURE__*/function (_Component) {
       }, "USERNAME"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
         className: "formInput",
         type: "text",
-        name: "name"
+        name: "username",
+        value: this.state.username
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "formSection space"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
@@ -4566,7 +4601,8 @@ var signUp = /*#__PURE__*/function (_Component) {
       }, "EMAIL"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
         className: "formInput",
         type: "text",
-        name: "name"
+        name: "email",
+        value: this.state.email
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "formSection space"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
@@ -4574,7 +4610,8 @@ var signUp = /*#__PURE__*/function (_Component) {
       }, "PASSWORD"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
         className: "formInput",
         type: "password",
-        name: "password"
+        name: "password",
+        value: this.state.password
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
         className: "formButton",
         type: "submit",

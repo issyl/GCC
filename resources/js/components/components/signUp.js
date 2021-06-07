@@ -9,6 +9,42 @@ import "./signUp.css";
 import { Link, Redirect } from "react-router-dom";
 
 class signUp extends Component {
+    // constructor() {
+    //     super();
+
+    //     this.state = {
+    //         name: "",
+    //         team: "",
+    //         username: "",
+    //         email: "",
+    //         password: "",
+    //     };
+
+    //     this.createPlayer = this.createPlayer.bind(this);
+    // }
+
+    // createPlayer(event) {
+    //     event.preventDefault();
+
+    //     const player = {
+    //         name: this.state.name,
+    //         team: this.state.team,
+    //         username: this.state.username,
+    //         email: this.state.email,
+    //         password: this.state.password,
+    //     };
+    //     axios
+    //         .post("/api/createPlayer", player)
+    //         .then((response) => {
+    //             this.setState({
+    //                 name: "",
+    //             });
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         });
+    // }
+
     render() {
         const twitchClick = () => {
             window.location.href = "https://twitch.com";
@@ -31,13 +67,14 @@ class signUp extends Component {
                     <img className="logo" src={logo}></img>
                     <h1>SIGN UP</h1>
                     <h3>to Continue to LLL</h3>
-                    <form className="formSignUp">
+                    <form className="formSignUp" onSubmit={createPlayer}>
                         <div className="formSection space">
                             <label className="formText">NAME</label>
                             <input
                                 className="formInput"
                                 type="text"
                                 name="name"
+                                value={this.state.name}
                             />
                         </div>
                         <div className="formSection space">
@@ -45,7 +82,8 @@ class signUp extends Component {
                             <input
                                 className="formInput"
                                 type="text"
-                                name="name"
+                                name="team"
+                                value={this.state.team}
                             />
                         </div>
                         <div className="formSection space">
@@ -53,7 +91,8 @@ class signUp extends Component {
                             <input
                                 className="formInput"
                                 type="text"
-                                name="name"
+                                name="username"
+                                value={this.state.username}
                             />
                         </div>
                         <div className="formSection space">
@@ -61,7 +100,8 @@ class signUp extends Component {
                             <input
                                 className="formInput"
                                 type="text"
-                                name="name"
+                                name="email"
+                                value={this.state.email}
                             />
                         </div>
                         <div className="formSection space">
@@ -70,6 +110,7 @@ class signUp extends Component {
                                 className="formInput"
                                 type="password"
                                 name="password"
+                                value={this.state.password}
                             />
                         </div>
                         <button
@@ -84,7 +125,6 @@ class signUp extends Component {
                         </Link>
                         <img src={line} className="formSeparation"></img>
                     </form>
-                    
                 </div>
             </div>
         );
