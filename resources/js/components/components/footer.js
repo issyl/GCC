@@ -1,37 +1,65 @@
 import React from "react";
 import "./footer.css";
+import twitches from "../img/twitches.png";
+import instagram from "../img/instagram.png";
+import twitters from "../img/twitters.png";
+// import steam from "../img/steam.png";
 
 const footer = () => {
     return (
         <section id="footer">
             <div className="footerContent">
                 <ul>
-                    <li>CONTACT US!</li>
-                    <a href="https://www.instagram.com/ilham_tawakhal/">
-                        <li>@Instagram</li>
+                    <li className="contactUs">CONTACT US!</li>
+                    <a
+                        href="https://www.instagram.com/ilham_tawakhal/"
+                        className="contactItem"
+                    >
+                        <img src={instagram}></img>
+                        <li>Instagram</li>
                     </a>
-                    <a href="https://twitter.com/Ilham_tawakhal">
-                        <li>@Twitter</li>
+                    <a
+                        href="https://twitter.com/Ilham_tawakhal"
+                        className="contactItem"
+                    >
+                        <img src={twitters}></img>
+                        <li>Twitter</li>
                     </a>
-                    <a href="https://www.twitch.tv/itash__">
-                        <li>@Twitch</li>
+                    <a
+                        href="https://www.twitch.tv/itash__"
+                        className="contactItem"
+                    >
+                        <img src={twitches}></img>
+                        <li>Twitch</li>
                     </a>
                 </ul>
             </div>
             <div className="footerContent">
-                <p>Copyright by me @2021</p>
+                <p>uwu @2021</p>
             </div>
             <div className="footerContent">
                 <ul>
                     <li>CONTACT US!</li>
-                    <a href="https://www.instagram.com/ilham_tawakhal/">
-                        <li>@Instagram</li>
+                    <a
+                        href="https://www.instagram.com/ilham_tawakhal/"
+                        className="contactItem"
+                    >
+                        <img src={instagram}></img>
+                        <li>Instagram</li>
                     </a>
-                    <a href="https://twitter.com/Ilham_tawakhal">
-                        <li>@Twitter</li>
+                    <a
+                        href="https://twitter.com/Ilham_tawakhal"
+                        className="contactItem"
+                    >
+                        <img src={twitters}></img>
+                        <li>Twitter</li>
                     </a>
-                    <a href="https://www.twitch.tv/itash__">
-                        <li>@Twitch</li>
+                    <a
+                        href="https://www.twitch.tv/itash__"
+                        className="contactItem"
+                    >
+                        <img src={twitches}></img>
+                        <li>Twitch</li>
                     </a>
                 </ul>
             </div>

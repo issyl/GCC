@@ -17,12 +17,12 @@ const navBar = () => {
                 <Link to="/tournament" className="navText">
                     Tournament
                 </Link>
-                <Link to="/signIn" className="btnPosition">
+                {/* <Link to="/signIn" className="btnPosition">
                     <button className="signIn">
                         <p className="btnText">Sign In</p>
                     </button>
                 </Link>
-                <p className="navText">or</p>
+                <p className="navText">or</p> */}
                 <Link to="/signUp" className="btnPosition">
                     <button className="signUp">
                         <p className="btnText">Sign Up</p>

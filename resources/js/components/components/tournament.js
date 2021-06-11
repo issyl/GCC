@@ -11,6 +11,7 @@ class tournament extends Component {
 
         this.state = {
             Tournaments: [],
+            TournamentsFinished: [],
         };
     }
 
@@ -25,39 +26,76 @@ class tournament extends Component {
             .catch((error) => {
                 console.log(error);
             });
+
+        axios
+            .get("/api/tournament/finished")
+            .then((response) => {
+                this.setState({
+                    TournamentsFinished: response.data,
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     render() {
         const { Tournaments } = this.state;
+        const { TournamentsFinished } = this.state;
         return (
             <div id="tournament">
                 <div className="tournamentLeftContent">
                     <div className="subLeftContent">
                         <div className="gameMenu">
                             <img className="imgGameMenu" src={apexLegend}></img>
-                            <img className="imgGameMenu" src={valorant}></img>
+                            {/* <img className="imgGameMenu" src={valorant}></img> */}
                         </div>
                         <div className="mainContent">
                             <div className="contentMenu">
-                                <a>ACTIVE TOURNAMENT</a>
+                                <Link to="/tournament">ACTIVE TOURNAMENT</Link>
                                 <a>|</a>
-                                <a>FINISHED TOURNAMENT</a>
+                                <Link to="/tournament/finished">
+                                    FINISHED TOURNAMENT
+                                </Link>
                             </div>
-                            <div className="tournamentTable">
-                                {Tournaments.map((Tournaments) => (
-                                    <Link
-                                        className="tournamentTableContent"
-                                        to={`/${Tournaments.id}`}
-                                        key={Tournaments.id}
-                                    >
-                                        <h3>
-                                            {Tournaments.name.toUpperCase()}
-                                        </h3>
-                                        <h3>{Tournaments.date}</h3>
-                                        <h3>{Tournaments.prize}</h3>
-                                    </Link>
-                                ))}
-                            </div>
+                            <Router>
+                                <Switch>
+                                    <Route exact path="/tournament">
+                                        <div className="tournamentTable">
+                                            {Tournaments.map((Tournaments) => (
+                                                <Link
+                                                    className="tournamentTableContent"
+                                                    to="/help"
+                                                    key={Tournaments.id}
+                                                >
+                                                    <h3>
+                                                        {Tournaments.name.toUpperCase()}
+                                                    </h3>
+                                                    <h3>{Tournaments.date}</h3>
+                                                    <h3>{Tournaments.prize}</h3>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </Route>
+                                    <Route exact path="/tournament/finished">
+                                        <div className="tournamentTable">
+                                            {TournamentsFinished.map((Tournaments) => (
+                                                <Link
+                                                    className="tournamentTableContent"
+                                                    to="/help"
+                                                    key={Tournaments.id}
+                                                >
+                                                    <h3>
+                                                        {Tournaments.name.toUpperCase()}
+                                                    </h3>
+                                                    <h3>{Tournaments.date}</h3>
+                                                    <h3>{Tournaments.prize}</h3>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </Route>
+                                </Switch>
+                            </Router>
                         </div>
                     </div>
                 </div>
@@ -66,7 +104,7 @@ class tournament extends Component {
                         ARE YOU BRAVE ENOUGH TO SHOW THE WORLD WHO IS THE
                         CHAMPION? SIGN UP NOW!
                     </h1>
-                    <Link to="/signIn">
+                    <Link to="/signUp">
                         <button className="joinNow">
                             <p className="btnText">Join Now</p>
                         </button>

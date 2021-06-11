@@ -1,10 +1,15 @@
 import React from "react";
+import background from "../img/background.png";
 
 const guide = () => {
     const guide = {
-        width: "100%",
+        // width: "100%",
+        // height: "100vh",
+        backgroundColor: "#10131c",
+        backgroundImage: "url(" + background + ")",
+        backgroundSize: "cover",
         height: "100vh",
-        backgroundColor: "#28283b",
+        width: "100%",
     };
 
     const guideContent = {

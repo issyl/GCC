@@ -21,7 +21,15 @@ Route::get('/guide', function () {
     return view('welcome');
 });
 
+Route::get('/help', function () {
+    return view('welcome');
+});
+
 Route::get('/tournament', function () {
+return view('welcome');
+});
+
+Route::get('/tournament/finished', function () {
 return view('welcome');
 });
 

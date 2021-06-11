@@ -37,6 +37,20 @@ class TournamentController extends Controller
             ->join('players', 'tournaments.team_id', '=', 'players.id')
             ->join('games', 'tournaments.game_id', '=', 'games.id')
             ->select('tournaments.*', 'games.game', 'regions.region', 'players.team')
+            ->where('tournaments.status', '=', 'ON GOING')
+            ->get();
+
+        return $tournament->toJson();
+    }
+
+    public function finished()
+    {
+        $tournament = DB::table('tournaments')
+            ->join('regions', 'tournaments.region_id', '=', 'regions.id')
+            ->join('players', 'tournaments.team_id', '=', 'players.id')
+            ->join('games', 'tournaments.game_id', '=', 'games.id')
+            ->select('tournaments.*', 'games.game', 'regions.region', 'players.team')
+            ->where('tournaments.status', '=', 'finished')
             ->get();
 
         return $tournament->toJson();

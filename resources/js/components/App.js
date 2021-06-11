@@ -10,6 +10,7 @@ import Footer from "./components/footer";
 import ForgotPassword from "./components/forgotPassword";
 import Tournament from "./components/tournament";
 import Guide from "./components/guide";
+import Help from "./components/help";
 
 import "./App.css";
 
@@ -37,9 +38,16 @@ class App extends Component {
                                 <Route exact path="/tournament">
                                     <Tournament />
                                 </Route>
+                                <Route exact path="/tournament/finished">
+                                    <Tournament />
+                                </Route>
+                                <Route exact path="/help">
+                                    <Help />
+                                </Route>
                                 <Route exact path="/guide">
                                     <Guide />
                                 </Route>
+
                                 <Footer />
                             </>
                         </Switch>

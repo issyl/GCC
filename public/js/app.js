@@ -3967,15 +3967,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var _components_signIn__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/signIn */ "./resources/js/components/components/signIn.js");
 /* harmony import */ var _components_signUp__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/signUp */ "./resources/js/components/components/signUp.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
 /* harmony import */ var _components_navBar__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/navBar */ "./resources/js/components/components/navBar.js");
 /* harmony import */ var _components_mainContent__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/mainContent */ "./resources/js/components/components/mainContent.js");
 /* harmony import */ var _components_footer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/footer */ "./resources/js/components/components/footer.js");
 /* harmony import */ var _components_forgotPassword__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/forgotPassword */ "./resources/js/components/components/forgotPassword.js");
 /* harmony import */ var _components_tournament__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/tournament */ "./resources/js/components/components/tournament.js");
 /* harmony import */ var _components_guide__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/guide */ "./resources/js/components/components/guide.js");
-/* harmony import */ var _App_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./App.css */ "./resources/js/components/App.css");
+/* harmony import */ var _components_help__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/help */ "./resources/js/components/components/help.js");
+/* harmony import */ var _App_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./App.css */ "./resources/js/components/App.css");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4012,6 +4013,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+
 var App = /*#__PURE__*/function (_Component) {
   _inherits(App, _Component);
 
@@ -4030,25 +4032,31 @@ var App = /*#__PURE__*/function (_Component) {
         className: "App"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "appPosition"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_11__.BrowserRouter, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_12__.Switch, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_12__.Route, {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_12__.BrowserRouter, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_13__.Switch, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_13__.Route, {
         exact: true,
         path: "/signIn"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_signIn__WEBPACK_IMPORTED_MODULE_2__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_12__.Route, {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_signIn__WEBPACK_IMPORTED_MODULE_2__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_13__.Route, {
         exact: true,
         path: "/signUp"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_signUp__WEBPACK_IMPORTED_MODULE_3__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_12__.Route, {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_signUp__WEBPACK_IMPORTED_MODULE_3__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_13__.Route, {
         exact: true,
         path: "/forgotPassword"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_forgotPassword__WEBPACK_IMPORTED_MODULE_7__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_navBar__WEBPACK_IMPORTED_MODULE_4__.default, null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_12__.Route, {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_forgotPassword__WEBPACK_IMPORTED_MODULE_7__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_navBar__WEBPACK_IMPORTED_MODULE_4__.default, null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_13__.Route, {
         exact: true,
         path: "/"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_mainContent__WEBPACK_IMPORTED_MODULE_5__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_12__.Route, {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_mainContent__WEBPACK_IMPORTED_MODULE_5__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_13__.Route, {
         exact: true,
         path: "/tournament"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_tournament__WEBPACK_IMPORTED_MODULE_8__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_12__.Route, {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_tournament__WEBPACK_IMPORTED_MODULE_8__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_13__.Route, {
+        exact: true,
+        path: "/tournament/finished"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_tournament__WEBPACK_IMPORTED_MODULE_8__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_13__.Route, {
+        exact: true,
+        path: "/help"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_help__WEBPACK_IMPORTED_MODULE_10__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_13__.Route, {
         exact: true,
         path: "/guide"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_guide__WEBPACK_IMPORTED_MODULE_9__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_footer__WEBPACK_IMPORTED_MODULE_6__.default, null))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_12__.Switch, null))));
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_guide__WEBPACK_IMPORTED_MODULE_9__.default, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_footer__WEBPACK_IMPORTED_MODULE_6__.default, null))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_13__.Switch, null))));
     }
   }]);
 
@@ -4076,31 +4084,57 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _footer_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./footer.css */ "./resources/js/components/components/footer.css");
+/* harmony import */ var _img_twitches_png__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../img/twitches.png */ "./resources/js/components/img/twitches.png");
+/* harmony import */ var _img_instagram_png__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../img/instagram.png */ "./resources/js/components/img/instagram.png");
+/* harmony import */ var _img_twitters_png__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../img/twitters.png */ "./resources/js/components/img/twitters.png");
 
 
+
+
+ // import steam from "../img/steam.png";
 
 var footer = function footer() {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("section", {
     id: "footer"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "footerContent"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "CONTACT US!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-    href: "https://www.instagram.com/ilham_tawakhal/"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "@Instagram")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-    href: "https://twitter.com/Ilham_tawakhal"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "@Twitter")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-    href: "https://www.twitch.tv/itash__"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "@Twitch")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", {
+    className: "contactUs"
+  }, "CONTACT US!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "https://www.instagram.com/ilham_tawakhal/",
+    className: "contactItem"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+    src: _img_instagram_png__WEBPACK_IMPORTED_MODULE_3__.default
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "Instagram")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "https://twitter.com/Ilham_tawakhal",
+    className: "contactItem"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+    src: _img_twitters_png__WEBPACK_IMPORTED_MODULE_4__.default
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "Twitter")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "https://www.twitch.tv/itash__",
+    className: "contactItem"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+    src: _img_twitches_png__WEBPACK_IMPORTED_MODULE_2__.default
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "Twitch")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "footerContent"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Copyright by me @2021")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "uwu @2021")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "footerContent"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "CONTACT US!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-    href: "https://www.instagram.com/ilham_tawakhal/"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "@Instagram")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-    href: "https://twitter.com/Ilham_tawakhal"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "@Twitter")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-    href: "https://www.twitch.tv/itash__"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "@Twitch")))));
+    href: "https://www.instagram.com/ilham_tawakhal/",
+    className: "contactItem"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+    src: _img_instagram_png__WEBPACK_IMPORTED_MODULE_3__.default
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "Instagram")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "https://twitter.com/Ilham_tawakhal",
+    className: "contactItem"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+    src: _img_twitters_png__WEBPACK_IMPORTED_MODULE_4__.default
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "Twitter")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "https://www.twitch.tv/itash__",
+    className: "contactItem"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+    src: _img_twitches_png__WEBPACK_IMPORTED_MODULE_2__.default
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "Twitch")))));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (footer);
@@ -4178,13 +4212,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _img_background_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../img/background.png */ "./resources/js/components/img/background.png");
+
 
 
 var guide = function guide() {
   var guide = {
-    width: "100%",
+    // width: "100%",
+    // height: "100vh",
+    backgroundColor: "#10131c",
+    backgroundImage: "url(" + _img_background_png__WEBPACK_IMPORTED_MODULE_1__.default + ")",
+    backgroundSize: "cover",
     height: "100vh",
-    backgroundColor: "#28283b"
+    width: "100%"
   };
   var guideContent = {
     color: "#ffffff",
@@ -4221,6 +4261,69 @@ var guide = function guide() {
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (guide);
+
+/***/ }),
+
+/***/ "./resources/js/components/components/help.js":
+/*!****************************************************!*\
+  !*** ./resources/js/components/components/help.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var _img_background_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../img/background.png */ "./resources/js/components/img/background.png");
+
+
+
+
+var help = function help() {
+  var forgotPassword = {
+    width: "100vw",
+    height: "100vh",
+    backgroundColor: "#10131c",
+    backgroundImage: "url(" + _img_background_png__WEBPACK_IMPORTED_MODULE_1__.default + ")",
+    backgroundSize: "cover",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center"
+  };
+  var forgotPasswordText = {
+    width: "50%",
+    height: "auto",
+    wordWrap: "break-word",
+    fontFamily: "Righteous",
+    color: "#ffffff",
+    backgroundColor: "#1e3044",
+    textAlign: "center",
+    alignContent: "center",
+    fontWeight: "lighter",
+    borderRadius: "20%",
+    padding: "5%"
+  };
+  var goBack = {
+    color: "#e41376",
+    textDecoration: "none",
+    fontSize: "18px",
+    fontWeight: "bold"
+  };
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    style: forgotPassword
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", {
+    style: forgotPasswordText
+  }, "HELLO! We're happy that you are that excited to join us! but we're sorry to inform you that this webpage is under maintenance, for more further registration please contact us. Best Regards!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__.Link, {
+    style: goBack,
+    to: "/tournament"
+  }, " ", "Go Back"));
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (help);
 
 /***/ }),
 
@@ -4293,15 +4396,6 @@ var navBar = function navBar() {
     to: "/tournament",
     className: "navText"
   }, "Tournament"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__.Link, {
-    to: "/signIn",
-    className: "btnPosition"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-    className: "signIn"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
-    className: "btnText"
-  }, "Sign In"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
-    className: "navText"
-  }, "or"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__.Link, {
     to: "/signUp",
     className: "btnPosition"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
@@ -4463,7 +4557,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _img_GCC_logo_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../img/GCC logo.png */ "./resources/js/components/img/GCC logo.png");
 /* harmony import */ var _img_Line_png__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../img/Line.png */ "./resources/js/components/img/Line.png");
 /* harmony import */ var _signUp_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./signUp.css */ "./resources/js/components/components/signUp.css");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_4__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -4655,12 +4748,7 @@ var signUp = /*#__PURE__*/function (_Component) {
         className: "formButton",
         type: "submit",
         name: "signUp"
-      }, "SIGN UP"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
-        to: "/signIn"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "have an account? Sign In here")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
-        src: _img_Line_png__WEBPACK_IMPORTED_MODULE_2__.default,
-        className: "formSeparation"
-      }))));
+      }, "SIGN UP"))));
     }
   }]);
 
@@ -4735,7 +4823,7 @@ var welcomePage = function welcomePage() {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "welcomePage"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "JOIN THE COMPETITIVE ESPORT GAMING"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h4", null, "CONTEST YOUR SKILL AMONG THE PROS"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__.Link, {
-    to: "/signIn",
+    to: "/signUp",
     className: "btnPosition"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
     className: "joinNow"
@@ -4816,6 +4904,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
 /* harmony import */ var _img_apex_logo_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../img/apex-logo.png */ "./resources/js/components/img/apex-logo.png");
 /* harmony import */ var _img_valorant_logo_png__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../img/valorant-logo.png */ "./resources/js/components/img/valorant-logo.png");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
@@ -4862,7 +4951,8 @@ var tournament = /*#__PURE__*/function (_Component) {
 
     _this = _super.call(this);
     _this.state = {
-      Tournaments: []
+      Tournaments: [],
+      TournamentsFinished: []
     };
     return _this;
   }
@@ -4879,11 +4969,19 @@ var tournament = /*#__PURE__*/function (_Component) {
       })["catch"](function (error) {
         console.log(error);
       });
+      axios__WEBPACK_IMPORTED_MODULE_3___default().get("/api/tournament/finished").then(function (response) {
+        _this2.setState({
+          TournamentsFinished: response.data
+        });
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   }, {
     key: "render",
     value: function render() {
       var Tournaments = this.state.Tournaments;
+      var TournamentsFinished = this.state.TournamentsFinished;
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         id: "tournament"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
@@ -4895,25 +4993,40 @@ var tournament = /*#__PURE__*/function (_Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
         className: "imgGameMenu",
         src: _img_apex_logo_png__WEBPACK_IMPORTED_MODULE_1__.default
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
-        className: "imgGameMenu",
-        src: _img_valorant_logo_png__WEBPACK_IMPORTED_MODULE_2__.default
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "mainContent"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "contentMenu"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", null, "ACTIVE TOURNAMENT"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", null, "|"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", null, "FINISHED TOURNAMENT")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
+        to: "/tournament"
+      }, "ACTIVE TOURNAMENT"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", null, "|"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
+        to: "/tournament/finished"
+      }, "FINISHED TOURNAMENT")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.BrowserRouter, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Switch, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Route, {
+        exact: true,
+        path: "/tournament"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "tournamentTable"
       }, Tournaments.map(function (Tournaments) {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
           className: "tournamentTableContent",
-          to: "/".concat(Tournaments.id),
+          to: "/help",
           key: Tournaments.id
         }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, Tournaments.name.toUpperCase()), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, Tournaments.date), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, Tournaments.prize));
-      }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Route, {
+        exact: true,
+        path: "/tournament/finished"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "tournamentTable"
+      }, TournamentsFinished.map(function (Tournaments) {
+        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
+          className: "tournamentTableContent",
+          to: "/help",
+          key: Tournaments.id
+        }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, Tournaments.name.toUpperCase()), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, Tournaments.date), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, Tournaments.prize));
+      })))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "tournamentRightContent"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "ARE YOU BRAVE ENOUGH TO SHOW THE WORLD WHO IS THE CHAMPION? SIGN UP NOW!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
-        to: "/signIn"
+        to: "/signUp"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
         className: "joinNow"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
@@ -9411,7 +9524,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "#footer {\r\n    background-color: #1e3044;\r\n    height: 20vh;\r\n    width: 100%;\r\n    padding: 0;\r\n    margin: 0;\r\n    box-shadow: 0px -5px 8px #e41376;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    align-items: center;\r\n    color: #ffffff;\r\n}\r\n\r\n.footerContent {\r\n    margin: 10%;\r\n}\r\n\r\n.footerContent ul {\r\n    list-style: none;\r\n}\r\n\r\n.footerContent ul li {\r\n    font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen,\r\n        Ubuntu, Cantarell, \"Open Sans\", \"Helvetica Neue\", sans-serif;\r\n    margin-top: 5%;\r\n    font-size: 12pt;\r\n    text-decoration: none;\r\n    color: #fff;\r\n}\r\n\r\n.footerContent a {\r\n  text-decoration: none;\r\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "#footer {\r\n    background-color: #1e3044;\r\n    height: 20vh;\r\n    width: 100%;\r\n    padding: 0;\r\n    margin: 0;\r\n    box-shadow: 0px -5px 8px #e41376;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    align-items: center;\r\n    color: #ffffff;\r\n}\r\n\r\n.footerContent {\r\n    margin: 10%;\r\n}\r\n\r\n.contactItem {\r\n    display: flex;\r\n    flex-direction: row;\r\n    /* justify-content: center; */\r\n    align-items: center;\r\n}\r\n\r\n.contactItem img {\r\n    width: 10%;\r\n    margin-right: 10%;\r\n}\r\n\r\n.footerContent ul {\r\n    list-style: none;\r\n}\r\n\r\n.footerContent ul li {\r\n    font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen,\r\n        Ubuntu, Cantarell, \"Open Sans\", \"Helvetica Neue\", sans-serif;\r\n    margin-top: 5%;\r\n    font-size: 12pt;\r\n    text-decoration: none;\r\n    color: #fff;\r\n}\r\n\r\n.footerContent a {\r\n    text-decoration: none;\r\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -9465,7 +9578,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "#navBar {\r\n  background-color: #1e3044;\r\n  color: #ffffff;\r\n  height: 10vh;\r\n  width: 100%;\r\n  padding: 0;\r\n  margin: 0;\r\n  position: fixed;\r\n  box-shadow: 0px 5px 8px #e41376;\r\n  z-index: 3;\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-between;\r\n  \r\n}\r\n.navPosition {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: flex-end;\r\n  align-items: center;\r\n  height: 100%;\r\n}\r\n\r\n.navText {\r\n  margin-right: 2%;\r\n  font-size: 18px;\r\n  text-decoration: none;\r\n  color: #ffffff;\r\n  font-family: 'Righteous';\r\n}\r\n\r\n.signIn {\r\n  background-color: transparent;\r\n  border-width: 1px;\r\n  border-style: solid;\r\n  border-radius: 5px;\r\n  border-color: #ffffff;\r\n  width: 10vw;\r\n  height: 5vh;\r\n  margin-right: 2%;\r\n  color: #ffffff;\r\n  cursor: pointer;\r\n}\r\n\r\n.btnText {\r\n  font-weight: bold;\r\n  font-size: 18px;\r\n  text-decoration: none;\r\n  color: #ffffff;\r\n  margin: 0;\r\n  font-family: Arial, Helvetica, sans-serif;\r\n}\r\n\r\n.btnPosition {\r\n  margin-right: 2%;\r\n}\r\n\r\n.signUp {\r\n  background-color: #cc1f38;\r\n  border-radius: 5px;\r\n  width: 10vw;\r\n  height: 5vh;\r\n  border-color: transparent;\r\n  margin-right: 2%;\r\n  color: #ffffff;\r\n  cursor: pointer;\r\n}\r\n\r\n.signIn:hover,\r\n.signUp:hover {\r\n  box-shadow: 0px 0px 8px #ffffff;\r\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "#navBar {\r\n  background-color: #1e3044;\r\n  color: #ffffff;\r\n  height: 10vh;\r\n  width: 100%;\r\n  padding: 0;\r\n  margin: 0;\r\n  position: fixed;\r\n  box-shadow: 0px 5px 8px #e41376;\r\n  z-index: 3;\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: space-between;\r\n  \r\n}\r\n.navPosition {\r\n  display: flex;\r\n  flex-direction: row;\r\n  justify-content: flex-end;\r\n  align-items: center;\r\n  height: 100%;\r\n}\r\n\r\n.navText {\r\n  margin-right: 5%;\r\n  font-size: 18px;\r\n  text-decoration: none;\r\n  color: #ffffff;\r\n  font-family: 'Righteous';\r\n}\r\n\r\n.signIn {\r\n  background-color: transparent;\r\n  border-width: 1px;\r\n  border-style: solid;\r\n  border-radius: 5px;\r\n  border-color: #ffffff;\r\n  width: 10vw;\r\n  height: 5vh;\r\n  margin-right: 2%;\r\n  color: #ffffff;\r\n  cursor: pointer;\r\n}\r\n\r\n.btnText {\r\n  font-weight: bold;\r\n  font-size: 18px;\r\n  text-decoration: none;\r\n  color: #ffffff;\r\n  margin: 0;\r\n  font-family: Arial, Helvetica, sans-serif;\r\n}\r\n\r\n.btnPosition {\r\n  margin-right: 5%;\r\n}\r\n\r\n.signUp {\r\n  background-color: #cc1f38;\r\n  border-radius: 5px;\r\n  width: 10vw;\r\n  height: 5vh;\r\n  border-color: transparent;\r\n  margin-right: 2%;\r\n  color: #ffffff;\r\n  cursor: pointer;\r\n}\r\n\r\n.signIn:hover,\r\n.signUp:hover {\r\n  box-shadow: 0px 0px 8px #ffffff;\r\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -9901,6 +10014,21 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/img/instagram.png":
+/*!***************************************************!*\
+  !*** ./resources/js/components/img/instagram.png ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/instagram.png?bfafb7b73fbd6b8c291c74800178997f");
+
+/***/ }),
+
 /***/ "./resources/js/components/img/steam.png":
 /*!***********************************************!*\
   !*** ./resources/js/components/img/steam.png ***!
@@ -9931,6 +10059,21 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/img/twitches.png":
+/*!**************************************************!*\
+  !*** ./resources/js/components/img/twitches.png ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/twitches.png?ea279f80f1ef17e6d0ebfbf70fc5a157");
+
+/***/ }),
+
 /***/ "./resources/js/components/img/twitter.png":
 /*!*************************************************!*\
   !*** ./resources/js/components/img/twitter.png ***!
@@ -9943,6 +10086,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/twitter.png?9666c65368c7506438fab03d72b5c9ad");
+
+/***/ }),
+
+/***/ "./resources/js/components/img/twitters.png":
+/*!**************************************************!*\
+  !*** ./resources/js/components/img/twitters.png ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/twitters.png?858ddf375a5584a36a470da0fe886b51");
 
 /***/ }),
 

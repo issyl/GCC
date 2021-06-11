@@ -16,6 +16,7 @@ use App\Http\Controllers\PlayerController;
 |
 */ 
 Route::get('/tournament', [TournamentController::class, 'client']);
+Route::get('/tournament/finished', [TournamentController::class, 'finished']);
 
 Route::post('/signUp', [PlayerController::class, 'createPlayer']);
 
