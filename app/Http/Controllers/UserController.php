@@ -41,11 +41,16 @@ class UserController extends Controller
      */
     public function store(UserRequest $request)
     {
+        $imageName = time() . '.' . $request->file('profile_photo_path')->getClientOriginalExtension();
+        $request->file('profile_photo_path')->move(public_path('/images'), $imageName);
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'profile_photo_path' => $imageName,
+            // 'public_path' => $imageName,
         ]);
+        // $request->file('profile_photo_path')->move(public_path('images'), $imageName);
 
         return redirect()->route('users.index');
     }
@@ -84,9 +89,11 @@ class UserController extends Controller
     {
         $data = $request->all();
 
-        // if ($request->file('profile_photo_paths')) {
-        //     $data['profile_photo_path'] = $request->file('profile_photo_path')->store('assets/user', 'public');
-        // }
+        if ($request->file('profile_photo_path')) {
+            $imageName = time() . '.' . $request->file('profile_photo_path')->getClientOriginalExtension();
+            $request->file('profile_photo_path')->move(public_path('/images'), $imageName);
+            $data['profile_photo_path'] = $imageName;
+        }
 
         $user->update($data);
 

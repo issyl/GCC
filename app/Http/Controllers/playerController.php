@@ -54,16 +54,15 @@ class PlayerController extends Controller
 
     public function createPlayer(PlayerRequest $request)
     {
-        dd($request);
-        Players::create([
-            'name' => $request->name,
-            'team' => $request->team,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        $addPlayer = new Players();
+        $addPlayer->name = $request->name;
+        $addPlayer->team = $request->team;
+        $addPlayer->username = $request->username;
+        $addPlayer->email = $request->email;
+        $addPlayer->password = $request->password;
 
-        return redirect()->view('welcome');
+        $addPlayer->save();
+        // return view('welcome');
     }
 
     /**

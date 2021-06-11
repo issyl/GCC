@@ -4550,11 +4550,16 @@ var signUp = /*#__PURE__*/function (_Component) {
         password_confirmation: this.state.password_confirmation
       }).then(function (response) {
         console.log(response);
+        window.location.href = "/";
       })["catch"](function (error) {
         console.log(error);
       });
       this.setState({
-        name: ""
+        name: "",
+        team: "",
+        username: "",
+        email: "",
+        password: ""
       });
     }
   }, {

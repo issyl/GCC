@@ -26,11 +26,11 @@ class signUp extends Component {
         this.handleFieldChange = this.handleFieldChange.bind(this);
     }
 
-    handleFieldChange (event) {
+    handleFieldChange(event) {
         this.setState({
-          [event.target.name]: event.target.value,
-        })
-      }
+            [event.target.name]: event.target.value,
+        });
+    }
 
     createPlayer(event) {
         event.preventDefault();
@@ -53,6 +53,7 @@ class signUp extends Component {
             })
             .then((response) => {
                 console.log(response);
+                window.location.href = "/";
             })
             .catch((error) => {
                 console.log(error);
@@ -60,6 +61,10 @@ class signUp extends Component {
 
         this.setState({
             name: "",
+            team: "",
+            username: "",
+            email: "",
+            password: "",
         });
     }
 
