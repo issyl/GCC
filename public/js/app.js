@@ -4117,7 +4117,9 @@ var footer = function footer() {
     src: _img_twitches_png__WEBPACK_IMPORTED_MODULE_2__.default
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "Twitch")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "footerContent"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "uwu @2021")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+    href: "/login"
+  }, "uwu @2021")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "footerContent"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, "CONTACT US!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
     href: "https://www.instagram.com/ilham_tawakhal/",
@@ -4858,12 +4860,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 var works = function works() {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "works"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "title"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "HOW LLL WORKS")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "HOW GCC WORKS")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "worksCard"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "card"
@@ -4883,8 +4886,8 @@ var works = function works() {
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "PRIZES"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Get your prizes by winning the game against pros from the tournament"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "learnMore"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-    href: "#"
-  }, "Learn More About LLL ...")));
+    href: "/help"
+  }, "Learn More About GCC ...")));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (works);
@@ -9524,7 +9527,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "#footer {\r\n    background-color: #1e3044;\r\n    height: 20vh;\r\n    width: 100%;\r\n    padding: 0;\r\n    margin: 0;\r\n    box-shadow: 0px -5px 8px #e41376;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    align-items: center;\r\n    color: #ffffff;\r\n}\r\n\r\n.footerContent {\r\n    margin: 10%;\r\n}\r\n\r\n.contactItem {\r\n    display: flex;\r\n    flex-direction: row;\r\n    /* justify-content: center; */\r\n    align-items: center;\r\n}\r\n\r\n.contactItem img {\r\n    width: 10%;\r\n    margin-right: 10%;\r\n}\r\n\r\n.footerContent ul {\r\n    list-style: none;\r\n}\r\n\r\n.footerContent ul li {\r\n    font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen,\r\n        Ubuntu, Cantarell, \"Open Sans\", \"Helvetica Neue\", sans-serif;\r\n    margin-top: 5%;\r\n    font-size: 12pt;\r\n    text-decoration: none;\r\n    color: #fff;\r\n}\r\n\r\n.footerContent a {\r\n    text-decoration: none;\r\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "#footer {\r\n    background-color: #1e3044;\r\n    height: 20vh;\r\n    width: 100%;\r\n    padding: 0;\r\n    margin: 0;\r\n    box-shadow: 0px -5px 8px #e41376;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    align-items: center;\r\n    color: #ffffff;\r\n}\r\n\r\n.footerContent {\r\n    margin: 10%;\r\n}\r\n\r\n.contactItem {\r\n    display: flex;\r\n    flex-direction: row;\r\n    /* justify-content: center; */\r\n    align-items: center;\r\n}\r\n\r\n.contactItem img {\r\n    width: 10%;\r\n    margin-right: 10%;\r\n}\r\n\r\n.footerContent ul {\r\n    list-style: none;\r\n}\r\n\r\n.footerContent ul li {\r\n    font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen,\r\n        Ubuntu, Cantarell, \"Open Sans\", \"Helvetica Neue\", sans-serif;\r\n    margin-top: 5%;\r\n    font-size: 12pt;\r\n    text-decoration: none;\r\n    color: #fff;\r\n}\r\n\r\n.footerContent a{\r\n    text-decoration: none;\r\n    color: #ffffff;\r\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

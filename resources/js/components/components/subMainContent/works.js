@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./works.css";
 import signUpIcon from "../../img/SignUp.svg";
 import contestIcon from "../../img/Contest.svg";
@@ -8,7 +9,7 @@ const works = () => {
   return (
     <div className="works">
       <div className="title">
-        <h1>HOW LLL WORKS</h1>
+        <h1>HOW GCC WORKS</h1>
       </div>
       <div className="worksCard">
         <div className="card">
@@ -36,7 +37,7 @@ const works = () => {
         </div>
       </div>
       <div className="learnMore">
-        <a href="#">Learn More About LLL ...</a>
+        <a href="/help">Learn More About GCC ...</a>
       </div>
     </div>
   );

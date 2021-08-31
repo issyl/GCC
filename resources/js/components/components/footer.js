@@ -35,7 +35,7 @@ const footer = () => {
                 </ul>
             </div>
             <div className="footerContent">
-                <p>uwu @2021</p>
+                <a href="/login">uwu @2021</a>
             </div>
             <div className="footerContent">
                 <ul>
